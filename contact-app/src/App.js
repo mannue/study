@@ -9,6 +9,13 @@ export default class App extends Component {
 
     state = {
         information: [],
+        keyword: '',
+    }
+
+    handleChange = (e) => {
+        this.setState({
+        [e.target.name]: e.target.value,
+        });
     }
 
     handleCreate = (data) => {
@@ -49,8 +56,11 @@ export default class App extends Component {
     return(
         <div>
           <PhoneForm onCreate={this.handleCreate}/>
+            <input name="keyword" value={this.state.keyword} onChange={this.handleChange} placeholder="검색...."></input>
           <PhoneInfoList
-              data={this.state.information}
+              data={this.state.information.filter(
+                info => info.name.indexOf(this.state.keyword) > -1
+              )}
               onRemove={this.handleRemove}
               onUpdate={this.handleUpdate}
           />
