@@ -138,4 +138,33 @@
         - 컴포넌트에 생성자를 정의했다.
         - 생성자는 컴포넌트의 초기 상태를 설정하는 수단
         - 여기서 this 키워드는 컴포넌트 인스턴스 자체를, state는 생성자에서 만든 state 프로퍼티를 , count는 계산에 사용될 값을 가르킨다.
+
+- 표현식으로 프로퍼티 값 설정
+    - 표현식으로 프로퍼티의 값을 설정할 수 있는데, 그렇게 함으로써 HTML 엘리먼트나 자식 컴포넌트의 설정을 바꿀수 있다.
+    ```jsx
+        import React, { Component } from "react";
         
+        export default class App extends Component {
+          constructor(props) {
+            super(props);
+            this.state = {
+              count: 3,
+            };
+          };
+        
+          isEven(val) {
+            return val % 2 === 0 ? "Even" : "Odd";
+          };
+        
+          getClassName(val) {
+            return val % 2 === 0
+                ? "bg-primary text-white text-center p-2 m-1"
+                : "bg-secondary text-white text-center p-2 m-1"
+          };
+          render = () => (
+            <h4 className={this.getClassName(this.state.count)}>
+              Number of things: {this.isEven(this.state.count)}
+            </h4>
+          );
+        }
+    ```
