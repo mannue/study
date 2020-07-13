@@ -25,13 +25,15 @@ export default class App extends Component {
   });
 
   render = () => (
-    <h4 className={this.getClassName(this.state.count)}>
-      {/*{message}*/}
-      {/*Number of things: { count }*/}
-      <button className="btn btn-info m-2" onClick={this.handleClick}>
-        Click Me
-      </button>
-      Number of things: {this.isEven(this.state.count)}
-    </h4>
+    <div className="m-2">
+        <div className="form-group">
+            <label>Name:</label>
+            <input className="form-control"/>
+        </div>
+        <div className="form-group">
+            <label>City:</label>
+            <input className="form-control"/>
+        </div>
+    </div>
   );
 }
