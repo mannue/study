@@ -69,4 +69,30 @@
     - 애플리케이션이 브라우저 URL에 응답하는 일을 URL 라우팅(URL routing) 이라고 한다.
     
 - 상품과 카테고리 컴포넌트 제작 
+    - 컴포넌트는 작은 작업을 수행하거나 작은 양의 콘텐츠를 보여주는 역할을 하며, 컴포넌트들이 조합돼 더욱 복잡한 기능을 수행하게 된다.
+    - Link를 사용하면 사용자가 링크를 클릭했을때 어떤 HTTP 요청을 보내거나 애플리케이션을 다시 로딩하지 않아도 브라우저에 새 URL로의 이동을 요청할 수 있다.
+    - 리덕스 패키지는 connect라는 함수를 제공하는데, 이는 컴포넌트를 데이터 스토어에 연결함으로써 데이터 스토어로부터 값이든 데이터 스토어를 부착하는 함수로부터의 값이든 props를 사용할 수 있게 한다.
+    - 카테고리가 선택되면 그에 따라 상품 데이터를 필터링해야 하는데, 이는 리액트 라우터패키지의 기능을 사용해 가능하다.
+   
+    ```jsx
+     <Route path="/shop/products/:category?" render={{(routeProps) => 
+    ``` 
+    - path prop은 브라우저가 /shop/products로 내비게이션할 때까지 Route를 대기시킨다.
+    - 만약 /shop/products/running 등과 같이 URL에 추가된 부분이 있다면 그 부분이 categorㅛ 파라미터에 할당된다.
+    - 브라우저가 path와 부합하는 URL로 내비게이션하면 Route는 render prop에 지정된 콘텐츠를 보여주게 된다.
     
+    ```jsx
+    <Shop { ...this.props } { ...routeProps }
+             products={ filterProducts(this.props.products,
+                                       routeProps.match.params.category) }/>
+    ```
+  - 여기가 데이터 스토어와 URL 라우팅 기능이 조합된 지점이다.
+  - Shop 컴포넌트는 사용자가 선택한 카테고리가 뭔지 알아야 하는데, 이는 Route 컴포넌트의 render prop에 전달된 인자를 통해 알 수 있다.
+  - ...this.props 는 Shop 의 props 에 복사되며, ...routeProps 는 Shop 의 routeProps 에 복사된다.
+  
+  - Route는 Switch 와 Redirect 라는 리액트 라우터 패키지의 또 다른 두 컴포넌트와 함께 사용된다.
+  - Switch 와 Redirect 는 현재 URL이 Route에 의해 일치되지 않는 경우 /shop/products 로 재지향, 즉 리다이렉션 하는 역할을 한다.
+  - ShopConnector 컴포넌트는 데이터 스토어로 데이터를 로딩하기 위해 componentDidMount 메서드를 사용
+  - componentDidMount 는 리액트의 컴포넌트 생명주기 메서드 중 하나이다.
+  
+- 카테고리 버튼 개선 
