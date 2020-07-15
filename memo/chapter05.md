@@ -104,14 +104,14 @@
     - 부트스트랩CSS 클래스와 함께 사용 할때 잘 맞지 않는 부분이 있다.
     - 현재 경로에 대한 정보를 얻기 위해 URL 라우팅 시스템에 접근할 때 Route 컴포넌트를 사용할 수 있다.
         ```jsx
-          export class ToggleLink extends Component {
-          
+            export class ToggleLink extends Component {
+            
               constructor(props) {
                   super(props);
               }
-          
+            
               static defaultProps = {};
-          
+            
               render() {
                   return <Route path={ this.props.to } exact={ this.props.exact }
                                 children={ routeProps => {
@@ -119,14 +119,59 @@
                                     const activeClass = this.props.activaClass || "btn-primary";
                                     const inActiveClass = this.props.inActiveClas || "btn-secondary";
                                     const combinedClasses = `${baseClasses} ${routeProps.match ? activeClass: inActiveClass}`;
-          
+            
                                     return <Link to={ this.props.to } className={ combinedClasses }>
                                         { this.props.children }
                                     </Link>
                                 }} />
               }
-          }
+            }
         ```
+        - Link 는 꼭 Route 안에 있어야 된다.
+ 
+- 쇼핑 카트 추가
+    ```text
+      논리연산자 %% 와 || 를 이용하여 조건 출력 
+  
+      console.log(true && 1 > 0 && 'success'); //success 
+      console.log(true && 1 < 0 && 'success'); //false 
+      console.log(1 > 0 || 'success'); //true 
+      console.log(1 < 0 || 'success'); //success 
+          
+      출처: https://blog.sonim1.com/180 [Kendrick's Blog] // 감사합니다.
+    ```
+    - 데이터 스토어 확장
+        ```text
+        TIP
+        데이터 스토어는 무난한 구조로 유지하자. 
+        객체의 계층도가 복잡할 경우 깊은 곳에 존재하는 변경사항에 대해서는 감지하거나 보여주기 어려울수 있기 때문이다. 
+        ```
+        - __redux 데이터 스토어는 기본적으로 하나의 리듀서를 사용하지만__, 쉽게 여러 redux를 조합해 사용할 수도 있다.
+        - redux 는 여러 리듀서의 데이터 스토어에 대한 역할 분담을 지원한다.
+         
+        ```jsx
+            export const CommonReducer = (...reducers) => (storeData, action) => {
+                for (let i=0; i< reducers.length; i++) {
+                    let newStore = reducers[i](storeData, action);
+                    if (newStore !== storeData) {
+                        return newStore;
+                    }
+                }
+                return storeData;
+            }
+        ```
+        - CommonReducer 함수는 여러 리듀서를 하나의 함수에 통합해 각 리듀서에게 액션 처리를 요청한다.
+        - 각 리듀서는 데이터 스토어의 콘텐츠를 변경한 새 객체를 리턴함으로써 액션이 처리됐음을 쉽게 감지 할수 있게 한다.
+        
+    - CartSummary 컴포넌트 추가
+        - 리액트가 웹 애플리케이션 개발의 많은 측면을 지원하지만, 그럼에도 다소 개발하기 힘든 통상적인 작업들이 있다.
+        - 그중 하나가 조건부 랜더링인데, 데이터 값에 따라 각기 다른 컨텐츠를 사용자에게 보여주는 기업을 말한다.
+        - 리액트는 이벤트 핸들러를 등록 할수 있는 props를 제공한다.
+        - 어떤 엘리먼트가 클릭됐을 때 발생하는 이벤트, 즉 클릭 이벤트에 대한 핸들러는 onClick이다.
+        - CartDetails 컴포넌트는 사용자에게 상세 내용이 담긴 테이블 하나를 보여준다.
     
-    
+        - render 메서드는 반드시 최상위 엘리먼트 하나만을 리턴해야 하며, 이는 HTML 문서가 생성 될때 삽입된다.
+        - __컨텐츠가 처리되면 React.Fragment 엘리먼트는 폐기되며, 그 안에 있던 엘리먼트들만이 HTML 문서에 추가 되기 때문이다.__
+        
+    - 라우팅 설정에 카트 URL 추가
         
