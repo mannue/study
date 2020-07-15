@@ -76,9 +76,13 @@
    
     ```jsx
      <Route path="/shop/products/:category?" render={{(routeProps) => 
+    // :category? 의 뜻
+    // :category 는 경로 매개변수 이며, 경로 매개변수는 기본적으로 해당 매개변수에 대응하는 값이 반드시 필요하다.
+    // 이를 선택적 매개 변수로 명시하기 위해서는 경로 매개변수 뒤에 JavaScript 정규 표현식의 일부인 물음표(?)를 붙이면 해당 매개변수는 선택적인 표현임을 뜻한다.
+    // 참고 사이트 : https://ing-yeo.net/2019/09/react-beginner-5/
     ``` 
     - path prop은 브라우저가 /shop/products로 내비게이션할 때까지 Route를 대기시킨다.
-    - 만약 /shop/products/running 등과 같이 URL에 추가된 부분이 있다면 그 부분이 categorㅛ 파라미터에 할당된다.
+    - 만약 /shop/products/running 등과 같이 URL에 추가된 부분이 있다면 그 부분이 category 파라미터에 할당된다.
     - 브라우저가 path와 부합하는 URL로 내비게이션하면 Route는 render prop에 지정된 콘텐츠를 보여주게 된다.
     
     ```jsx
@@ -95,4 +99,5 @@
   - ShopConnector 컴포넌트는 데이터 스토어로 데이터를 로딩하기 위해 componentDidMount 메서드를 사용
   - componentDidMount 는 리액트의 컴포넌트 생명주기 메서드 중 하나이다.
   
-- 카테고리 버튼 개선 
+- 카테고리 버튼 개선
+        
