@@ -9,7 +9,7 @@ export default class App extends Component {
         return <Provider store={SportsStoreDataStore}>
             <Router>
                 <Switch>
-                    <Route paht="/shop" component={ShopConnector}/>
+                    <Route path="/shop" component={ShopConnector}/>
                     <Redirect to="/shop"/>
                 </Switch>
             </Router>
