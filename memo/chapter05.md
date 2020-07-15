@@ -100,4 +100,33 @@
   - componentDidMount 는 리액트의 컴포넌트 생명주기 메서드 중 하나이다.
   
 - 카테고리 버튼 개선
+    - 리액트 라우터패키지는 이미 특정 URL이 일치함을 알려주는 컴포넌트를 제공한다.
+    - 부트스트랩CSS 클래스와 함께 사용 할때 잘 맞지 않는 부분이 있다.
+    - 현재 경로에 대한 정보를 얻기 위해 URL 라우팅 시스템에 접근할 때 Route 컴포넌트를 사용할 수 있다.
+        ```jsx
+          export class ToggleLink extends Component {
+          
+              constructor(props) {
+                  super(props);
+              }
+          
+              static defaultProps = {};
+          
+              render() {
+                  return <Route path={ this.props.to } exact={ this.props.exact }
+                                children={ routeProps => {
+                                    const baseClasses = this.props.className || "m-2 btn btn-block";
+                                    const activeClass = this.props.activaClass || "btn-primary";
+                                    const inActiveClass = this.props.inActiveClas || "btn-secondary";
+                                    const combinedClasses = `${baseClasses} ${routeProps.match ? activeClass: inActiveClass}`;
+          
+                                    return <Link to={ this.props.to } className={ combinedClasses }>
+                                        { this.props.children }
+                                    </Link>
+                                }} />
+              }
+          }
+        ```
+    
+    
         
