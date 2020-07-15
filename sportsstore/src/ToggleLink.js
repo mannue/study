@@ -1,13 +1,9 @@
-import React, {Component, PropTypes} from 'react';
+import React, { Component } from 'react';
 import { Route, Link } from 'react-router-dom';
 
 const propTypes = {};
 
 export class ToggleLink extends Component {
-
-    constructor(props) {
-        super(props);
-    }
 
     static defaultProps = {};
 
