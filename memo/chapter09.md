@@ -118,5 +118,49 @@
    
 4. 린터의 이해
     - 린터는 프로젝트의 코드와 콘텐츠가 일련의 규칙들을 지키는지 확인하는 책임을 진다.
-    - 린터 차제는 작동이 중단되거나 다시 설정될 수 없다.
-    
+    - 린터 자체는 작동이 중단 되거나 다시 설정될 수 없다.
+    - 린터 자체의 작동을 멈추게 할 수는 없지만 코드에 주석을 추가함으로써 경고 메시지가 나타나지 않게 할 수는 있다.
+    ```jsx
+    // eslint-disable-next-line no-unused-vars
+    let error = "not a valid statement";
+    ```
+   - 만약 그다름 라인부터 모든 규칙에 대한 경고를 숨시고 싶다면 주석에 규칙 이름을 생략하면 된다.
+   ```jsx
+    // eslint-disable-next-line
+    let error = "not a valid statement";
+   ```
+   - 파일 전체에서 하나의 규칙에 대한 경고를 숨기고 싶다면 파일의 첫부분에 주석을 추가 하면 된다.
+   ```jsx
+   /* eslint-disable no-unused-vars */
+   import React, {Component} from 'react';
+   import "./App.css";
+   import reactLogo from "./logo.svg";
+   ```
+   - 파일 전체에서 모든 규칙에 대한 경고를 숨기고 싶다면 주석에서 규칙 이름을 생략하면 된다.
+
+5. 개발 도구
+    ```text
+    |     옵션             |    설명
+    | BROWSER             | 개발 도구가 초기 빌드 작업을 완료한 후 실행할 브라우저를 지정할 때 사용
+    | HOST                | 개발 HTTP 서버가 바인딩할 호스트명을 지정할 때 사용
+    | POST                | 개발 HTTP 서버가 사용할 포트를 지정할 때 사용
+    | HTTPS               | 이 옵션에 true 를 지정하면 자체 서명 인증서를 생성하고 개발 HTTP 서버에 SSL이 적용
+    | PUBLIC_URL          | public 폴더로부터 가져올 콘텐츠의 URL을 변경할때 사용
+    | CI                  | 이 옵션에 true 를 지정하면 빌드 과정에서의 모든 경고를 에러로 취급
+    | REACT_EDITOR        | 브라우저에서 스택 추척 부분을 클릭하면 열릴 코드 에디터를 지정 할때 사용
+    | CHOKIDAR_USEPOLLING | 개발 도구가 src 폴더 안의 변화를 감지하지 못할 때 이 옵션에 true 를 지정해야 한다. 이는 가상 머신이나 컨테이너에서 작업할때 발생할수 있는 상황이다.
+    | GENERATE_SOURCEMAP  | 이 옵션에 false를 지정하면 소스 맵이 생성되지 않는다. 소스 맵은 디버깅과정에서 브라우저가 번들된 자바스크립트 코드와 해당 소스 파일을 연관시킬때 사용된다.
+    | NODE_PATH           | Node.js 모듈을 찾기 위한 위치를 지정할 때 사용
+    ```
+   - .env 파일을 만들어 설정할 수 있다. 
+   
+   - 브라우저 디버거 사용하기
+        - 애플리케이션의 제어권을 디버거에 넘기는 가장 좋은 방법은 자바스크립트 debugger 키워드를 사용하는 것이다.
+        ```jsx
+            changeCity = () => {
+                debugger
+                this.setState({
+                    city: this.state.city === "London" ? "New York" : "London",
+                })
+            };
+        ```
