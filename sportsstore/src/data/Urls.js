@@ -3,7 +3,7 @@ import {DataTypes} from "./Types";
 
 
 const protocol = "http";
-const hostname= "10.252.9.228";
+const hostname= "127.0.0.1";
 const port = 3500;
 
 export const RestUrls = {
