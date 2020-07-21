@@ -231,6 +231,97 @@
     
     1. props 일괄 전달
         - __부모 컴포넌트가 제공한 props의 이름과 자식 컴포넌트가 원하는 props의 이름이 동일한 경우엔 비구조화 연산자(또는 스프레드 연산자)를 사용할 수 있다.__
+            ```jsx
+               export function SimpleButton(props) {
+                   return <SimpleButton {...props} className={`btn btn-${props.theme} btn-sm m-1`}/>
+               }
+            ```
+            - {...props} 표현식은 부모 컴포넌트로부터 받은 모든 props를 전달하며, className prop이 추가로 보완된다.
+            
+            - theme을 제외한 부모의 props를 모두 포함하는 childProps 배열 객체를 만들었다.
+                ```jsx
+                  export function CallbackButton(props) {
+                      debugger
+                      let { theme , ...childProps } = props;
+                      console.log(childProps)
+                      return <SimpleButton {...childProps} className={`btn btn-${props.theme} btn-sm m-1`}/>
+                  }
+                ```
+                - 지정된 인자가 아닌 나머지 모두를 포함하는 하나의 배열 객체를 레스트 파라미터라고 하며, 파라미터 앞에 레스트 연산자 가 붙는다.
+                
         
-         
+6. 기본 prop 값 제공
+    - defaultProps 프로퍼티에 부모 컴포넌트가 값을 제공하지 않을 때 사용할 기본값이 정의된 객체를 할당한다.
+        ```jsx
+          export function CallbackButton(props) {
+              let { theme , ...childProps } = props;
+              return <SimpleButton {...childProps} className={`btn btn-${props.theme} btn-sm m-1`}/>
+          }
+          
+          CallbackButton.defaultProps = {
+              text: "Default Text",
+              theme: "warning"
+          }
+        ```
+      
+7. Prop 값의 타입 검사
+    - prop는 받고자 하는 값의 데이터 타입을 알 수 없으며, 받은 값을 사용할 수 없을 때 부모 컴포넌트에 이를 알릴 방법도 없다.
+    - 이 문제의 해결을 위해 리액트는 props의 타입 선언을 지원한다.
+        ```jsx
+           import React from "react";
+           import PropTypes from "prop-types";
+           
+           export function SimpleButton(props) {
+               return <button onClick={ props.callback } className={props.className}>
+                   { props.text }
+               </button>
+           }
+           
+           SimpleButton.defaultProps = {
+               disable: false
+           }
+           
+           SimpleButton.propTypes = {
+               text: PropTypes.string,
+               theme: PropTypes.string,
+               callback: PropTypes.func,
+               disabled: PropTypes.bool
+           }
+        ```
+        ```text
+          모든 타입은 PropTypes.bool.isRequired 와 같은 식으로 isRequired 를 붙여 사용할 수 있다.
+          이는 해당 prop이 필수임을 나타내며, 부모 컴포넌트로부터 prop 값이 오지 않을 경우 경고 메시지를 생성한다.
+        ```
+    - PropTypes 엔 둘 이상의 타입이나 특정 값들을 지정할 수 있는 아래와 같은 유용한 메서드가 있다.
+        ```jsx
+          export function SimpleButton(props) {
+              return <button onClick={ props.callback } className={props.className}
+                  disabled={ props.disabled === "true" || props.disabled === true }>
+                  { props.text }
+              </button>
+          }
+          
+          SimpleButton.defaultProps = {
+              disabled: false
+          }
+          
+          SimpleButton.propTypes = {
+              text: PropTypes.string,
+              theme: PropTypes.string,
+              callback: PropTypes.func,
+              disabled: PropTypes.oneOfType([PropTypes.bool, PropTypes.string])
+          }
+        ```
+        ```text
+        |   메서드     |   설명
+        | oneOfType   | PropTypes 값들의 배열, 즉 여러 타입을 지정할 수 있다.
+        | oneOf       | 타입이 아닌 실제 값들의 배열을 지정 할 수 있다.
+        ```
+    
+    ```text
+       prop에 불리언 타입의 값을 주고 싶다면 disabled = { true }와 같이 disabled 프로퍼티에 표현식을 사용하면 된다.
+    ```
+    
         
+      
+    
