@@ -1,7 +1,29 @@
 import React from "react";
+//import { CallbackButton } from "./CallbackButton";
+import { SimpleButton } from "./SimpleButton";
 
-export function Summary() {
-    return <h4 className="bg-info text-white text-center p-2">
-        This is a summary
-    </h4>
+export function Summary(props) {
+  if (props.name.length >= 4) {
+    return (
+      <>
+        <td>{props.index + 1}</td>
+        <td>{props.name}</td>
+        <td>{props.name.length}</td>
+        <td>
+          <SimpleButton
+            className="btn btn-warning btn-sm m-1"
+            callback={props.reverseCallback}
+            text={`Reverse (${props.name})`}
+          />
+          <SimpleButton
+            className="btn btn-info btn-sm m-1"
+            callback={() => props.promoteCallback(props.name)}
+            text={`Promote (${[props.name]})`}
+          />
+        </td>
+      </>
+    );
+  } else {
+    return null;
+  }
 }
