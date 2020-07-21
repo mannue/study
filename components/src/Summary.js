@@ -1,5 +1,6 @@
 import React from "react";
-import { CallbackButton } from "./CallbackButton";
+//import { CallbackButton } from "./CallbackButton";
+import { SimpleButton } from "./SimpleButton";
 
 export function Summary(props) {
   if (props.name.length >= 4) {
@@ -9,12 +10,15 @@ export function Summary(props) {
         <td>{props.name}</td>
         <td>{props.name.length}</td>
         <td>
-          <CallbackButton callback={props.reverseCallback}/>
-          <CallbackButton
-            theme="info"
+          <SimpleButton
+            className="btn btn-warning btn-sm m-1"
+            callback={props.reverseCallback}
+            text={`Reverse (${props.name})`}
+          />
+          <SimpleButton
+            className="btn btn-info btn-sm m-1"
             callback={() => props.promoteCallback(props.name)}
-            text="Promote"
-            disabled="true"
+            text={`Promote (${[props.name]})`}
           />
         </td>
       </>
