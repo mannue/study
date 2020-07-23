@@ -12,7 +12,7 @@ class SortedList extends Component {
     }
 
     getList() {
-        return this.state.sort ? [...this.props.list].reverse() : this.props.list
+        return this.state.sort ? [...this.props.list].sort() : this.props.list
     }
 
     toggleSort = () => {
