@@ -19,6 +19,7 @@ export function ProController(FeatureComponent) {
         }
 
         render() {
+            console.log("ProController render")
             return (
                 <div className="container-fluid">
                     <div className="row">

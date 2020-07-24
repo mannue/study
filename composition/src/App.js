@@ -6,9 +6,11 @@ import GeneralList from "./GeneralList";
 import SortedList from "./SortedList";
 import { ProFeature } from "./ProFeature";
 import {ProController} from "./ProController";
+import {LogToConsole} from "./LogToConsole";
 
 //const ProList = ProFeature(SortedList);
-const ProList = ProController(SortedList);
+//const ProList = ProController(SortedList);
+const ProList = ProController(LogToConsole(SortedList, "Sorted", true, true, true));
 
 function App() {
   const [counter, setCounter] = useState(0);

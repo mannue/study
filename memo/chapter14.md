@@ -214,3 +214,36 @@ export function ProFeature(FeatureComponent) {
 ```
 - 이 HOC 함수는 클래스 기반의 상태 유지 컴포넌트를 리턴한다.
 - 이 컴포넌트는 체크박스를 보여주며, 또한 래핑된 컴포넌트의 가시성을 제거하기 위해 ProFeature HOC 를 사용한다.
+
+
+4.2. HOC의 조합
+- __HOC의 유용함 중 하나는 래핑된 컴포넌트 클래스를 생성하는 함수 호출만 변경함으로써 서로 조합할 수 있다는 점이다.__
+```jsx
+    import React from "react";
+    
+    export function LogToConsole(FeatureComponent, label, logMount, logRender, logUnmount) {
+        return class extends Comment {
+    
+            componentDidMount() {
+                if (logMount) {
+                    console.log(`${label}: mount`);
+                }
+            }
+    
+            componentWillUnmount() {
+                if (logUnmount) {
+                    console.log(`${label}: unmount`);
+                }
+            }
+    
+            render() {
+                if (logRender) {
+                    console.log(`${label}: render`);
+                }
+                return <FeatureComponent { ...this.props }/>
+            }
+        }
+    }
+```
+- 이 HOC 함수는 래핑될 컴포넌트와 자바스크립트 콘솔에 메시지를 출력할 label 인자를 받는다.
+
