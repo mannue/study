@@ -122,3 +122,95 @@ export default GeneralList;
 - 이 컴포넌트는 list라는 이름의 prop를 받고 그 map 메서드를 사용해 일련의 div 엘리먼트를 렌더링한다.
 - 컴포넌트가 list 를 받아 정렬하게 하려면 GeneralList 가 제공하는 기능을 기반으로 좀 더 특성화된 컴포넌트를 만들면 된다.
 
+
+## 4. 고차 컴포넌트 
+- __고차 컴포넌트는 (HOC) 특성화 컴포넌트의 대안으로서, 컴포넌트에 공통 코드는 필요하지만 연관 콘텐츠의 렌더링은 필요 없는 경우에 유용하다.__
+- HOC는 횡단관심사 의 구현에 자주 사용되는데, __횡단 관심사란 애플리케이션 전반을 가로지르는 공통의 작업을 말한다.__
+- 횡단 관심사의 개념이 없다면 동일한 코드가 여러 곳에 구현될 여지가 많을 것이다.
+
+```jsx
+import React from 'react';
+
+export function ProFeature(FeatureComponent) {
+    return function (props) {
+        if (props.pro) {
+            let { pro, ...childProps} = props;
+            return <FeatureComponent {...childProps} />
+        } else {
+            return <h5 className="bg-warning text-white text-center">
+                This is a Pro Feature
+            </h5>
+        }
+    }
+}
+```
+- __HOC는 하나의 컴포넌트를 받아서 추가 기능을 입힌 새로운 하나의 컴포넌트를 리턴하는 함수다.__
+- HOC는 ProFeature라는 함수인데, 이는 pro 라는 이름의 prop 값이 true 일 경우에만 사용자에게 보여야 할 컴포넌트 하나를 받는다.
+- 즉 일종의 단순한 권한 관리 기능이다.
+- 컴포넌트를 보여주기 위해 이 함수는 인자로 받은 컴포넌트를 사용해 pro를 제외한 모든 props를 전달한다.
+    ```jsx
+      let { pro, ...childProps} = props;
+      return <FeatureComponent {...childProps} />
+    ``` 
+
+- HOC를 사용하려면 아래와 같이 해당 HOC 함수를 호출해 새 컴포넌트를 만들면 된다.
+    ```jsx
+      const ProList = ProFeature(SortedList);
+    ```
+    - HOC는 함수이므로 동작을 설정하기 위해 인자들을 더 추가 할 수 있다.
+    - 함수의 결과는 ProList 라는 상수에 할당했으며, 이를 render 메서드 안에서 다른 컴포넌트들과 같은 방식으로 사용했다.
+    ```jsx
+      <ProList list={names} pro={proMode} />
+    ```
+    - pro prop 은 HOC 인 proList를 위해서, list prop은 ProList가 감싸고 있는 SortedList 컴포넌트를 위해 정의했다.
+    
+4.1. 상태 유지 HOC
+- HOC도 상태 유지 컴포넌트가 될수 있으며, 그렇게 함으로써 애플리케이션에 좀 더 복잡한 기능을 추가할 수 있다.
+```jsx
+    import React, {Component} from "react";
+    import {ProFeature} from "./ProFeature";
+    
+    export function ProController(FeatureComponent) {
+        const ProtectedFeature = ProFeature(FeatureComponent);
+    
+        return class extends Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    proMode: false,
+                }
+            }
+    
+            toggleProMode = () => {
+                this.setState({
+                    proMode: !this.state.proMode,
+                })
+            }
+    
+            render() {
+                return (
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-12 text-center p-2">
+                                <div className="form-check">
+                                    <input type="checkbox" className="form-check-input"
+                                           value={this.state.proMode}
+                                           onChange={this.toggleProMode}/>
+                                    <label className="form-check-label">Pro Mode</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-12">
+                                <ProtectedFeature {...this.props}
+                                                  pro={ this.state.proMode }/>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+        }
+    }
+```
+- 이 HOC 함수는 클래스 기반의 상태 유지 컴포넌트를 리턴한다.
+- 이 컴포넌트는 체크박스를 보여주며, 또한 래핑된 컴포넌트의 가시성을 제거하기 위해 ProFeature HOC 를 사용한다.

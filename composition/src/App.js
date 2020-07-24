@@ -4,10 +4,23 @@ import ActionButton from "./ActionButton";
 import { ThemeSelector } from "./ThemeSelector";
 import GeneralList from "./GeneralList";
 import SortedList from "./SortedList";
+import { ProFeature } from "./ProFeature";
+import {ProController} from "./ProController";
+
+//const ProList = ProFeature(SortedList);
+const ProList = ProController(SortedList);
 
 function App() {
   const [counter, setCounter] = useState(0);
-  const [names, setNames] = useState(["Zoe","Bob","Alice","Dora","Joe"])
+  const [names, setNames] = useState(["Zoe", "Bob", "Alice", "Dora", "Joe"]);
+  const [cities, setCities] = useState([
+    "London",
+    "New York",
+    "Paris",
+    "Milan",
+    "Boston",
+  ]);
+  const [proMode, setProMode] = useState(false);
 
   const incrementCounter = (event) => {
     setCounter(counter + 1);
@@ -26,17 +39,27 @@ function App() {
     </div>
   );*/
 
+  const toggleProMode = () => {
+    setProMode(!proMode);
+  };
+
   return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-6">
-            <GeneralList list={names} theme="primary"/>
+    <div className="container-fluid">
+      <div className="row">
+          <div className="col-3">
+            <GeneralList list={names} theme="primary" />
           </div>
-          <div className="col-6">
-            <SortedList list={ names} />
+          <div className="col-3">
+            <ProList list={names}/>
           </div>
-        </div>
+          <div className="col-3">
+            <GeneralList list={cities} theme="secondary" />
+          </div>
+          <div className="col-3">
+            <ProList list={cities} pro={proMode} />
+          </div>
       </div>
+    </div>
   );
 }
 
