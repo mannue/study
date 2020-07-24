@@ -272,3 +272,45 @@ export function ProFeature(FeatureComponent) {
 4.4. 인자 있는 렌더링 prop
 - 렌더링 prop은 보통의 자바스크립트 함수이며, 따라서 인자도 받을 수 있다.
 - 인자를 사용하면 렌더링 prop을 호출하는 컴포넌트가 자신을 래핑하는 콘텐츠에 props를 전달 할수 있다.
+
+
+## 5. 전역 데이터를 위한 컨텍스트
+- 애플리케이션 컴포지션과 관계없이 props 를 관리하는 일은 점점 힘들어 질수 있다.
+- 애플리케이션의 복잡도가 증가함에 따라 연관되는 컴포넌트들의 수도 증가한다.
+- __컴포넌트의 계층도가 커짐에 따라 상태 데이터는 애플리케이션 안에서 점점 더 높이 끌어 올려지며, 그 결과 모든 컴포넌트가 자신이 직접 사용하지도 않는 props 를 후손을 위해 전달하게 된다.__
+- __이 문제의 해결을 위해 리액트는 컨텍스트(context) 기능을 제공한다.__
+- __컨텍스트는 상태 데이터가 정의된 곳으로부터 필요로 하는 곳까지 중간 컴포넌트들을 거치지 않고 전달되게 해준다.__
+
+- 코드 작성
+    ```jsx
+    import React, { Component } from "react";
+    
+    class ActionButton extends Component {
+      render() {
+        console.log(JSON.stringify(this.props))
+        console.log(`Render ActionButton (${this.props.text}) Component`);
+        return (
+          <button className={ this.getClasses(this.props.proMode)} onClick={this.props.callback} disabled={ !this.props.proMode}>
+            {this.props.text}
+          </button>
+        );
+      }
+    
+      getClasses(proMode) {
+        let col = proMode ? this.props.theme : "danger";
+        return `btn btn-${col} m-2`;
+      }
+    }
+    
+    export default ActionButton;
+    ```
+    - ActionButton이 의존하는 proMode 프로퍼티는 App 컴포넌트의 상태 일부분으로 사용될것이다.
+    - App 컴포넌트는 또한 proMode 값을 변경할 때 사용할 체크박스도 정의할 것이다.
+    - 컴포넌트 사슬의 결과, 부모로부터 받은 proMode 프로퍼티를 자식에게 전달하게 된다.
+    - SortedList 컴포넌트가 자신이 직접 사용하지 않음에도 불구하고 proMode를 전달해야 한다는 뜻이다.
+    - __이를 prop 드릴링(prop drilling) 또는 prop 스레딩(prop threading)이라고 하는데, 데이터 값을 필요로 하는 곳으로 컴포넌트 계층도를 통해 prop이 전달되는 것을 말한다.__
+    - 문제점
+        - 후손이 필요로 하는 prop을 전달하는  것을 잊어버리기 쉬운일이다.
+        - 복잡한 애플리케이션안에서 prop 스레딩의 빼먹는 단계를 찾는 일도 만만치 않다.
+    
+- __컨텍스트는 계층도 안의 중간 컴포넌트들을 거치는 prop 스레딩을 할 필요 없이, 상태 데이터를 사용하려는 곳에 직접 전달할 수 있게 한다.__ 

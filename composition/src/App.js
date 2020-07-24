@@ -65,15 +65,7 @@ function App() {
           <GeneralList list={names} theme="primary" />
         </div>
         <div className="col-6">
-          <ProFeature
-            pro={proMode}
-            render={ text =>
-                <Fragment>
-                  <h4 className="text-center">{ text }</h4>
-                  <SortedList list={ names }/>
-                </Fragment>
-            }
-          />
+          <SortedList proMode={proMode} list={names}/>
         </div>
       </div>
     </div>
