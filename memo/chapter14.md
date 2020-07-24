@@ -247,3 +247,28 @@ export function ProFeature(FeatureComponent) {
 ```
 - 이 HOC 함수는 래핑될 컴포넌트와 자바스크립트 콘솔에 메시지를 출력할 label 인자를 받는다.
 
+
+4.3. 렌더링 prop
+- __렌더링 prop 은 렌더링 돼야 할 콘텐츠를 컴포넌트에 제공하는 함수 prop 이며, 이는 한 컴포넌트가 다른 컴포넌트를 래핑하는 또 하나의 방법이다.__
+- 렌더링 prop을 사용하는 컴포넌트도 일반적인 방법으로 정의하면 된다. 단지 다른점은 부모가 제공한 콘텐츠를 보여주기 위해 render라는 이름의 함수 prop을 호출한다는점이다.
+    ```jsx
+      return props.render();
+    ```
+- 부모 컴포넌트는 자식 컴포넌트를 적용할 때 렌더링 prop을 위한 함수를 제공해야 한다.
+```text
+비록 관례이긴 하지만 렌더링 prop의 이름이 반드시 render 일 필요는 없다. 
+부모와 자식 컴포넌트에서 일관되게 사용하기만 한다면 어떤 이름이든 가능하다. 
+```
+
+```jsx
+ <ProFeature
+            pro={proMode}
+            render={() => <SortedList list={names} />}
+          />
+```
+- 리액트가 애플리케이션의 콘텐츠를 렌더링할때 ProFeature 컴포넌트의 render 메서드가 호출되며, 그다음에 render prop 함수가 호출돼 새 SortedList 컴포넌트가 생성된다.
+
+
+4.4. 인자 있는 렌더링 prop
+- 렌더링 prop은 보통의 자바스크립트 함수이며, 따라서 인자도 받을 수 있다.
+- 인자를 사용하면 렌더링 prop을 호출하는 컴포넌트가 자신을 래핑하는 콘텐츠에 props를 전달 할수 있다.

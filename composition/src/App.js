@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, {Fragment, useState} from "react";
 import Message from "./Message";
 import ActionButton from "./ActionButton";
 import { ThemeSelector } from "./ThemeSelector";
 import GeneralList from "./GeneralList";
 import SortedList from "./SortedList";
 import { ProFeature } from "./ProFeature";
-import {ProController} from "./ProController";
-import {LogToConsole} from "./LogToConsole";
+import { ProController } from "./ProController";
+import { LogToConsole } from "./LogToConsole";
 
 //const ProList = ProFeature(SortedList);
 //const ProList = ProController(SortedList);
-const ProList = ProController(LogToConsole(SortedList, "Sorted", true, true, true));
+//onst ProList = ProController(LogToConsole(SortedList, "Sorted", true, true, true));
 
 function App() {
   const [counter, setCounter] = useState(0);
@@ -48,18 +48,33 @@ function App() {
   return (
     <div className="container-fluid">
       <div className="row">
-          <div className="col-3">
-            <GeneralList list={names} theme="primary" />
+        <div className="col-12 text-center p-2">
+          <div className="form-check">
+            <input
+              type="checkbox"
+              className="form-check-input"
+              value={proMode}
+              onChange={toggleProMode}
+            />
+            <label className="form-check-label">Pro Mode</label>
           </div>
-          <div className="col-3">
-            <ProList list={names}/>
-          </div>
-          <div className="col-3">
-            <GeneralList list={cities} theme="secondary" />
-          </div>
-          <div className="col-3">
-            <ProList list={cities} pro={proMode} />
-          </div>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col-6">
+          <GeneralList list={names} theme="primary" />
+        </div>
+        <div className="col-6">
+          <ProFeature
+            pro={proMode}
+            render={ text =>
+                <Fragment>
+                  <h4 className="text-center">{ text }</h4>
+                  <SortedList list={ names }/>
+                </Fragment>
+            }
+          />
+        </div>
       </div>
     </div>
   );
