@@ -7,7 +7,7 @@ import SortedList from "./SortedList";
 import { ProFeature } from "./ProFeature";
 import { ProController } from "./ProController";
 import { LogToConsole } from "./LogToConsole";
-
+import { ProModeContext } from "./ProModeContext";
 //const ProList = ProFeature(SortedList);
 //const ProList = ProController(SortedList);
 //onst ProList = ProController(LogToConsole(SortedList, "Sorted", true, true, true));
@@ -22,7 +22,8 @@ function App() {
     "Milan",
     "Boston",
   ]);
-  const [proMode, setProMode] = useState(false);
+  //const [proMode, setProMode] = useState(false);
+  const [proContextData, setProContextData] = useState({proMode: false});
 
   const incrementCounter = (event) => {
     setCounter(counter + 1);
@@ -42,7 +43,9 @@ function App() {
   );*/
 
   const toggleProMode = () => {
-    setProMode(!proMode);
+    setProContextData({
+      proMode: !proContextData.proMode
+    })
   };
 
   return (
@@ -53,7 +56,7 @@ function App() {
             <input
               type="checkbox"
               className="form-check-input"
-              value={proMode}
+              value={proContextData.proMode}
               onChange={toggleProMode}
             />
             <label className="form-check-label">Pro Mode</label>
@@ -65,7 +68,9 @@ function App() {
           <GeneralList list={names} theme="primary" />
         </div>
         <div className="col-6">
-          <SortedList proMode={proMode} list={names}/>
+          <ProModeContext.Provider value={proContextData}>
+            <SortedList list={names}/>
+          </ProModeContext.Provider>
         </div>
       </div>
     </div>

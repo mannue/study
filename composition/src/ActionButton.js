@@ -1,13 +1,19 @@
 import React, { Component } from "react";
+import {ProModeContext} from "./ProModeContext";
 
 class ActionButton extends Component {
   render() {
     console.log(JSON.stringify(this.props))
     console.log(`Render ActionButton (${this.props.text}) Component`);
     return (
-      <button className={ this.getClasses(this.props.proMode)} onClick={this.props.callback} disabled={ !this.props.proMode}>
-        {this.props.text}
-      </button>
+        <ProModeContext.Consumer>
+          {
+            contextData =>
+                <button className={ this.getClasses(contextData.proMode)} onClick={this.props.callback} disabled={ !contextData.proMode}>
+                  {this.props.text}
+                </button>
+          }
+        </ProModeContext.Consumer>
     );
   }
 

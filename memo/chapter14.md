@@ -313,4 +313,125 @@ export function ProFeature(FeatureComponent) {
         - 후손이 필요로 하는 prop을 전달하는  것을 잊어버리기 쉬운일이다.
         - 복잡한 애플리케이션안에서 prop 스레딩의 빼먹는 단계를 찾는 일도 만만치 않다.
     
-- __컨텍스트는 계층도 안의 중간 컴포넌트들을 거치는 prop 스레딩을 할 필요 없이, 상태 데이터를 사용하려는 곳에 직접 전달할 수 있게 한다.__ 
+- __컨텍스트는 계층도 안의 중간 컴포넌트들을 거치는 prop 스레딩을 할 필요 없이, 상태 데이터를 사용하려는 곳에 직접 전달할 수 있게 한다.__
+
+5.1. 컨텍스트 정의
+- 컨텍스트는 애플리케이션의 어느 곳에서든 정의할 수 있다.
+ 
+ ```jsx
+    import React from "react";
+    
+    export const ProModeContext = React.createContext({
+        proMode: false
+    })
+```
+- 새 컨텍스트를 만들 때엔 React.createContext 메서드를 사용하며, 컨텍스트의 기본값을 지정하기 위한 데이터 객체를 넣을 수 있다.
+
+5.2. 컨텍스트 소비자
+- 다음 단계는 데이터 값이 필요한 곳에서 컨텍스트를 소비하는, 이른바 컨텍스트 소비자를 만드는 것이다.
+```jsx
+import React, { Component } from "react";
+import {ProModeContext} from "./ProModeContext";
+
+class ActionButton extends Component {
+  render() {
+    console.log(JSON.stringify(this.props))
+    console.log(`Render ActionButton (${this.props.text}) Component`);
+    return (
+        <ProModeContext.Consumer>
+          {
+            contextData =>
+                <button className={ this.getClasses(contextData.proMode)} onClick={this.props.callback} disabled={ !contextData.proMode}>
+                  {this.props.text}
+                </button>
+          }
+        </ProModeContext.Consumer>
+    );
+  }
+
+  getClasses(proMode) {
+    let col = proMode ? this.props.theme : "danger";
+    return `btn btn-${col} m-2`;
+  }
+}
+
+export default ActionButton;
+```
+- 컨텍스트를 소비하는 방법은 렌더링 prop 을 정의할 때와 비슷한데, 컨텍스트를 필요로 하는 커스텀 HTML 엘리먼트를 추가하면 된다.
+- 우선 컨텍스트 이름에 해당하는 HTML 엘리먼트를 그다음엔 마침표를 마지막엔 Consumer를 적는다.
+```text
+    <ProModeContext.Consumer>
+        // 컨텍스트가 소비되는 부분 
+    </ProModeContext.Consumer>
+```
+- 컴포넌트는 여전히 컴포넌트의 상태와 prop 데이터에 접근할 수 있으며, 이를 컨텍스트가 제공한 데이터와 함께 자유롭게 혼용할수 있다.
+
+
+5.3. 컨텍스트 제공자
+- 마지막 단계는 컨텍스트에 상태 데이터를 결부시키는 컨텍스트 제공자를 만드는 것이다.
+- 컨텍스트 소비자에게 App 컴포넌트의 모든 상태 데이터를 노출하지 않기 위해 proMode 프로퍼티를 갖는 proContextData 상태 객체를 만들었다.
+```jsx
+import React, {Fragment, useState} from "react";
+
+function App() {
+    const [proContextData, setProContextData] = useState({proMode: false});
+    
+    const incrementCounter = (event) => {
+        setCounter(counter + 1);
+    };
+
+    const toggleProMode = () => {
+        setProContextData({
+            proMode: !proContextData.proMode
+        })
+    };
+    
+    return (
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-12 text-center p-2">
+              <div className="form-check">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  value={proContextData.proMode}
+                  onChange={toggleProMode}
+                />
+                <label className="form-check-label">Pro Mode</label>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-6">
+              <GeneralList list={names} theme="primary" />
+            </div>
+            <div className="col-6">
+              <ProModeContext.Provider value={proContextData}>
+                <SortedList list={names}/>
+              </ProModeContext.Provider>
+            </div>
+          </div>
+        </div>
+    );
+}
+    
+export default App;
+
+}
+```
+
+- 컨텍스트를 적용하려면 또 다른 커스텀 HTML 엘리먼트를 사용해야 하는데, 먼저 컨텍스트 이름을 그다음엔 마침표를 마지막으로 Provider 를 적었다.
+    ```text
+       <ProModeContext.Provider value={proContextData}>
+          <SortedList list={names}/>
+        </ProModeContext.Provider>
+    ```
+- value 프로퍼티는 기본값을 덮어쓸 데이터, 즉 proContextData 상태 객체를 컨텍스트에 제공한다.
+- ProModeContext.Provider 의 시작과 끝 태그 사이에 정의된 컴포넌트는 ProModeContext.Consumer 엘리먼트를 사용해 상태 데이터에 직접 접근할수 있다.
+
+```text
+             ------------------ 컨텍스트 -----------------
+             |                                          |
+         App 컴포넌트 ---> SortedList 컴포넌트 ----> ActionButton 컴포넌트
+```
+- App 컴포넌트의 proMode 상태 데이터 프로퍼티를 ActionBution 컴포넌트가 직접 사용함수 있다는 뜻이다. SortedList 컴포넌트를 거치치 않고도 말이다.
