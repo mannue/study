@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import GeneralList from "./GeneralList";
 import ActionButton from "./ActionButton";
 
@@ -8,25 +8,28 @@ class SortedList extends Component {
 
         this.state = {
             sort: false,
-        }
+        };
     }
 
     getList() {
-        return this.state.sort ? [...this.props.list].sort() : this.props.list
+        return this.state.sort ? [...this.props.list].sort() : this.props.list;
     }
 
     toggleSort = () => {
         this.setState({
-            sort: !this.state.sort
-        })
-    }
+            sort: !this.state.sort,
+        });
+    };
     render() {
         return (
             <div>
-                <GeneralList list={ this.getList() } theme="info" />
+                <GeneralList list={this.getList()} theme="info" />
                 <div className="text-center m-2">
-                    <ActionButton theme="primary" text="sort"
-                                  callback={this.toggleSort}/>
+                    <ActionButton
+                        theme="primary"
+                        text="sort"
+                        callback={this.toggleSort}
+                    />
                 </div>
             </div>
         );
