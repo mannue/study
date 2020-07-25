@@ -60,25 +60,44 @@ const toggleProMode = (event, proMode) =>{
     }
   })
 
+  const toggleSuperMode = (event, proMode) =>
+    setSuperProContextData({
+      ...superProContextData,
+      proMode: !proMode,
+    })
+
+  const [superProContextData, setSuperProContextData] = useState({
+    proMode: false,
+    toggleProMode: toggleSuperMode,
+  })
 
 
   return (
       <div className="container-fluid">
-        <ProModeContext.Provider value={ proContextData}>
-          <div className="row">
-            <div className="col-12 text-center p-2">
+        <div className="row">
+          <div className="col-6 text-center p-2">
+            <ProModeContext.Provider value={ proContextData}>
               <ProModeToggle label="Pro Mode"/>
-            </div>
+            </ProModeContext.Provider>
           </div>
-          <div className="row">
-            <div className="col-6">
-              <GeneralList list={names} theme="primary" />
-            </div>
-            <div className="col-6">
+          <div className="col-6 text-center p-2">
+            <ProModeContext.Provider value={ superProContextData}>
+              <ProModeToggle label="Super Pro Mode"/>
+            </ProModeContext.Provider>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-6">
+            <ProModeContext.Provider value={ proContextData}>
               <SortedList list={names}/>
-            </div>
+            </ProModeContext.Provider>
           </div>
-        </ProModeContext.Provider>
+          <div className="col-6">
+            <ProModeContext.Provider value={ superProContextData}>
+              <SortedList list={cities}/>
+            </ProModeContext.Provider>
+          </div>
+        </div>
       </div>
   );
 }

@@ -502,3 +502,137 @@ export default App;
 - ProModeContext.Provider 엘리먼트를 끌어올림으로써 ProModeToggle 과 SortedList 컴포넌트 모두 범위 안에 포함되게 했다.
 - 그러나 이는 value 속성에 동일한 객체가 사용될때 선택할 수 있는 사항이며, 실제로는 각 자식 컴포넌트에 각자의 컨텍스트를 줄수 있다.
 - 그와 같은 방법은 각기 다른 컴포넌트들을 그룹화해 여러 컨텍스트 인스턴스, 즉 다중 컨텍스트를 사용해야 하는 경우에 유용하다.
+
+```text
+     return (
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-6 text-center p-2">
+                <ProModeContext.Provider value={ proContextData}>
+                  <ProModeToggle label="Pro Mode"/>
+                </ProModeContext.Provider>
+              </div>
+              <div className="col-6 text-center p-2">
+                <ProModeContext.Provider value={ superProContextData}>
+                  <ProModeToggle label="Super Pro Mode"/>
+                </ProModeContext.Provider>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-6">
+                <ProModeContext.Provider value={ proContextData}>
+                  <SortedList list={names}/>
+                </ProModeContext.Provider>
+              </div>
+              <div className="col-6">
+                <ProModeContext.Provider value={ superProContextData}>
+                  <SortedList list={cities}/>
+                </ProModeContext.Provider>
+              </div>
+            </div>
+          </div>
+      );
+```
+- 각 컨텍스트는 자신만의 데이터 객체를 가지며, 리액트는 각 컨텍스트의 제공자와 소비자를 파악할것 이다.
+
+5.5. 컨텍스트 API 사용
+- 리액트는 렌더링 prop 함수 방식보다 더 쉽게 컨텍스트에 접근 할수 있게 또 다른 수단을 제공한다.
+- 코드
+    ```jsx
+      import React, {Component} from 'react';
+      import {ProModeContext} from "./ProModeContext";
+      
+      export class ProModeToggle extends Component {
+          static contextType = ProModeContext
+      
+          render() {
+              return (<div className="form-check">
+                  <input type="checkbox" className="form-check-input"
+                         value={ this.context.proMode}
+                         onChange={ (e)=> this.context.toggleProMode(e,this.context.proMode) }/>
+                  <label className="form-check-label">
+                      { this.props.label }
+                  </label>
+              </div>)
+          }
+      }
+    ```
+    - __contextType 이라는 static 프로퍼티에 컨텍스트를 할당함으로써 컴포넌트 전반에서 this.context 로 접근이 가능해 졌다.__
+    - __이는 리액트에 비교적 최근에 추가된 기능으로 특히 컴포넌트가 하나의 컨텍스트를 사용할 때 쉽게 사용할수 있다.__
+    
+    a. 훅을 사용한 컨텍스트 소비
+    - userContext 훅은 함수형 컴포넌트를 위해 앞 예제의 contextType 프로퍼티에 상응하는 결과를 제공한다.
+    ```jsx
+      import React, {useContext} from 'react';
+      import {ProModeContext} from "./ProModeContext";
+      
+      export function ProModeToggle(props) {
+  
+          const context = useContext(ProModeContext);
+      
+          return (<div className="form-check">
+              <input type="checkbox" className="form-check-input"
+                     value={ context.proMode}
+                     onChange={ (e)=> context.toggleProMode(e,context.proMode) }/>
+              <label className="form-check-label">
+                  { props.label }
+              </label>
+          </div>)
+      
+      }
+    ```
+    - 보다시피 useContext 훅은 컨텍스트 객체를 리턴하며, 이를 통해 프로퍼티나 함수에 접근할 수 있다.
+    
+    
+## 6. 에러 경계
+- __컴포넌트의 렌더링 메서드나 생명주기 메서드에서 에러가 발생하면, 에러는 애플리케이션의 최상부에 도달할때까지 컴포넌트 계층도를 따라 전파하며, 그 시점에서 애플리케이션의 모든 컴포넌트는 언마운트된 상태가 된다.__
+- 이는 어떤 에러든 사실상 애플리케이션을 종료시킬 수 있다는 뜻으로 결코 이상적이지 않다.
+- 에러 메시지는 개발 단계에서만 나타나며, 배포된 애플리케이션에선 나타 나지 않는다.
+
+6.1. 에러 경계 컴포넌트
+- __클래스 기반의 컴포넌트는 componentDidCatch 라는 생명주기 메서드를 구현할 수 있는데, 이 메서드는 자식 컴포넌트가 에러를 던지면 호출된다.__
+- __리액트에선 이른바 에러 경계라는 컴포넌트에 에러 처리를 위임 할수 있다.__
+- 이 컴포넌트는 던져진 에러를 가로채 애플리케이션이 계속 진행되게 하거나, 문제의 본딜을 나타내는 메시지를 사용자에게 보여줄수 있다.
+- 코드
+```jsx
+    import React, {Component, Fragment} from 'react';
+    
+    class ErrorBoundary extends Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                errorThrown: false,
+            }
+        }
+    
+        componentDidCatch(error, info) {
+            this.setState({
+                errorThrown: true
+            })
+        }
+    
+        render() {
+            return (
+                <Fragment>
+                    {
+                        this.state.errorThrown &&
+                            <h3 className="bg-danger text-white text-center m-2 p-2">
+                                Error Detected
+                            </h3>
+                    }
+                    {
+                        this.props.children
+                    }
+                </Fragment>
+            );
+        }
+    }
+    
+    export default ErrorBoundary;
+```
+- componentDidCatch 메서드는 문제의 컴포넌트가 던진 에러 객체를 받는다.
+- 로딩에 유용하게 쓸수 있는, 컴포넌트의 스택 추적 내용이 담긴 추가 정보 객체도 받는다.
+- __에러 경계 컴포넌트가 사용될 때 리액트는 componentDidCatch 메서드를 호출하고 그 다음에 render 메서드를 호출한다.__
+- 에러 경계 컴포넌트가 렌더링한 콘텐츠 역시 컴포넌트의 마운트 단계에서 처리되며, 모든 컴포넌트의 인스턴스가 새로 생성된다.
+- 이런 순서를 통해 에러 경계 컴포넌트는 문제를 회피할수 있는 콘텐츠 렌더링을 하거나, 애플리케이션의 상태를 변경해 에러가 다시 발생하지 않게 할수 있는 기회를 갖는다.
+- 에러 경계 컴포넌트는 자신이 포함하는 모든 컴포넌트와 그 모든 자손에서 던진 어떤 에러라도 처리 할것이다.
