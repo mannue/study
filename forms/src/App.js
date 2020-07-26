@@ -6,9 +6,7 @@ function App() {
   const [formData, setFormData] = useState({});
 
   const submitData = (newData) => {
-      setFormData({
-          formData: newData,
-      })
+      setFormData(newData)
   }
 
   return <div className="container-fluid">

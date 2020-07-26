@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 
 class Display extends Component {
 
-    formatValue = (data) => Array.isArray(data) ? data.join(", ") : data.toString();
+    formatValue = (data) =>  {
+        return Array.isArray(data) ? data.join(", ") : data.toString();
+    }
 
     render() {
         let keys = Object.keys(this.props.data);
@@ -16,12 +18,12 @@ class Display extends Component {
                 <div className="container-fluid bg-secondary p-2">
                     {
                         keys.map(key =>
-                        <div key={key} className="row h5 text-white">
-                            <div className="col">{ key }:</div>
-                            <div className="col">
-                                { this.formatValue(this.props.data[key])}
+                            <div key={key} className="row h5 text-white">
+                                <div className="col">{ key }:</div>
+                                <div className="col">
+                                    { this.formatValue(this.props.data[key])}
+                                </div>
                             </div>
-                        </div>
                         )
                     }
                 </div>
