@@ -527,3 +527,106 @@ b. 값 일치 여부
 - 어떤 값들은 두번 입력을 받아 확인을 해야 하는 경우가 있다.
 - 예컨대 계정 생성 시 의 패스워드나 이메일 주소등이 그렇다.
 
+2.5. 폼에 특정적인 검증
+- 사용자가 선택한 사항들의 조합이 일괄돼야 하는 경우에는 개별 값만 검증을 수행할 수 없다.
+- 이런 종류의 검증은 사용자가 정상 데이터를 입력하고 제출한 다음에야 가능하며, 그 시점에서 애플리케이션은 데이터를 처리하기 전에 최종 검사를 수행해야 한다.
+- 개별 필드에 대한 검증은 여러 폼에서도 동일한 코드를 사용할 수있지만, 여러 값의 조합에 대한 검증은 주로 하나의 폼에 특정적인 코드를 사용하게 된다.
+- 코드
+    ```jsx
+      export function ValidateForm(data) {
+          let errors = [];
+          if (!data.email.endsWith("@example.com")) {
+              errors.push("Only example.com users allowed")
+          }
+          if (!data.email.toLowerCase().startsWith(data.name.toLowerCase())) {
+              errors.push("Email address must start with name")
+          }
+          if (data.name.toLowerCase() === "joe") {
+              errors.push("Go away, Joe")
+          }
+          return errors;
+      }
+    ```
+    - ValidateForm 함수는 폼 데이터를 받아서 이메일 주소가 @example.com 으로 끝나는지, email 값이 name 으로 시작하는지, name 프로퍼티의 값이 joe가 아닌지 확인한다.
+
+- 코드
+    ```jsx
+        import React, {Component, Fragment} from 'react';
+        import {ValidationContext} from "./ValidationContext";
+        import {ValidateData} from "./validation";
+        
+        
+        export class FormValidator extends Component {
+        
+            constructor(props) {
+                super(props);
+                this.state = {
+                    errors: {},
+                    dirty: {},
+                    formSubmitted: false,
+                    getMessagesForField: this.getMessagesForField
+                }
+            }
+        
+            static getDerivedStateFromProps(props, state) {
+                state.errors = ValidateData(props.data, props.rules)
+                if (state.formSubmiited && Object.keys(state.errors).length === 0) {
+                    let formErrors = props.validateForm(props.data);
+                    if (formErrors > 0) {
+                        state.errors.form = formErrors;
+                    }
+                }
+                return state;
+            }
+        
+            get formValid() {
+                return Object.keys(this.state.errors).length === 0;
+            }
+        
+            handleChange = (ev) => {
+                let name = ev.target.name;
+                this.setState(state => state.dirty[name] = true)
+            }
+        
+            handleClick = (ev) => {
+                this.setState({ formSubmiited: true }, () => {
+                    if (this.formValid) {
+                        let formErrors = this.props.validateForm(this.props.data);
+                        if (formErrors.length === 0) {
+                            this.props.submit(this.props.data)
+                        }
+                    }
+                })
+            }
+        
+            getButtonClasses() {
+                return this.state.formSubmiited && !this.formValid ? "btn-danger" : "btn-primary";
+            }
+        
+            getMessagesForField = (field) => {
+                return (this.state.formSubmitted || this.state.dirty[field]) ? this.state.errors[field] || [] : []
+            }
+        
+            render() {
+                return (
+                    <Fragment>
+                        <ValidationContext.Provider value={this.state}>
+                            <div onChange={this.handleChange}>
+                                { this.props.children }
+                            </div>
+                        </ValidationContext.Provider>
+        
+                        <div>
+                            <button className={ `btn ${ this.getButtonClasses() }`}
+                                    onClick={this.handleClick}
+                                    disabled={ this.state.formSubmitted && !this.formValid }>
+                                Submit
+                            </button>
+                        </div>
+                    </Fragment>
+                )
+            }
+        }
+    ```
+    - 이 코드는 사용자가 submit 버튼을 누르면 전체 폼에 대한 검증을 시작한다.
+    
