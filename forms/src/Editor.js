@@ -7,14 +7,14 @@ class Editor extends Component {
     super(props);
     this.state = {
       name: "",
-      order: "",
       email: "",
-      terms: false,
+      emailConfirm: ""
     };
 
     this.rules = {
-      name: { required: true, minlength: 3, alpha: true },
-      terms: { true: true }
+      name: { required: true, minlength: 3, alpha: true},
+      email: { required: true, email: true, equals: "emailConfirm"},
+      emailConfirm: { required: true, email: true, equals: "email"}
     }
 
   }
@@ -47,15 +47,20 @@ class Editor extends Component {
                     <ValidationMessage field="name"/>
                   </div>
                   <div className="form-group">
-                    <div className="form-check">
-                      <input type="checkbox" name="terms"
-                      checked={ this.state.terms}
-                      onChange={this.updateFormValueCheck}/>
-                      <label className="form-ckeck-label">
-                        Agree to terms
-                      </label>
-                    </div>
-                    <ValidationMessage field="terms"/>
+                    <label>Email</label>
+                    <input className="form-control"
+                    name="email"
+                    value={this.state.email}
+                    onChange={this.updateFormValue}/>
+                    <ValidationMessage field="email"/>
+                  </div>
+                  <div className="form-group">
+                    <label>Confirm Email</label>
+                    <input className="form-control"
+                           name="emailConfirm"
+                           value={this.state.emailConfirm}
+                           onChange={this.updateFormValue}/>
+                    <ValidationMessage field="emailConfirm"/>
                   </div>
                 </FormValidator>
               </div>
