@@ -166,5 +166,31 @@ a. 복수의 아이템을 보여주는 select 엘리먼트
     ```
     - 사용자가 선택한 아이템들은 event.target.options 프로퍼티를 통해 접근할 수 있으며, selected 프로퍼티의 값이 true 인 아이템이 선별된다.
     - filter 메서드를 사용해 아이템을 선별하고 map 메서드를 사용해 value 프로퍼티를 가져오는데, 그 결과 선택된 각 option 엘리멘트의 value 속성 값들이 포함된 배열인 options가 만들어진다.
-    
+
+1.2. 라디오 버튼
+- 라디오 버튼으로 작업하는 과정은 텍스트 input 엘리먼트의 경우와 비슷하다.
+- 코드
+    ```jsx
+      <div className="form-group">
+        <label>Ice Cream Flavors</label>
+        {this.flavors.map(flavor=>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="flavor"
+              value={flavor}
+              checked={this.state.flavor === flavor}
+              onChange={this.updateFormValue}
+            />
+            <label className="form-check-label">{flavor}</label>
+          </div>
+        )}
+      </div>
+    ```
+- __라디오 버튼은 사용자가 목록에서 하나의 값만을 선택할 수 있게 한다.__
+- 아이템의 값은 라디오 버튼의 value 프로퍼티에 의해 지정되며, checked 프로퍼티는 엘리먼트가 정확히 선택됐는지를 나타낸다.
+
+
+
     
