@@ -2,9 +2,8 @@ import validator from "validator";
 
 export function ValidateData(data, rules) {
     let errors = {};
-    console.log(`data: ${data}, rules : ${rules}`)
-    Object.keys(data).forEach(field=> {
-        if (Object.hasOwnProperty(field)) {
+    Object.keys(data).forEach(field => {
+        if (rules.hasOwnProperty(field)) {
             let fielderrors = [];
             let val = data[field];
             if (rules[field].required && validator.isEmpty(val)) {

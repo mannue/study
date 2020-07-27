@@ -28,9 +28,10 @@ class Editor extends Component {
 
 
   render() {
+    console.log("Edit render!!")
     return (
               <div className="h5 bg-info text-white p-2">
-                <FormValidator data={this.state} rule={this.rules}
+                <FormValidator data={this.state} rules={this.rules}
                                           submit={this.props.submit}>
                   <div className="form-group">
                     <label>Name</label>
