@@ -6,6 +6,7 @@ function App() {
   const [formData, setFormData] = useState({});
 
   const submitData = (newData) => {
+      console.log("submitData")
       setFormData(newData)
   }
 

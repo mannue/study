@@ -191,6 +191,76 @@ a. 복수의 아이템을 보여주는 select 엘리먼트
 - __라디오 버튼은 사용자가 목록에서 하나의 값만을 선택할 수 있게 한다.__
 - 아이템의 값은 라디오 버튼의 value 프로퍼티에 의해 지정되며, checked 프로퍼티는 엘리먼트가 정확히 선택됐는지를 나타낸다.
 
+1.3. 체크박스
+- 체크박스의 작업 방식은 라디오 버튼과 다른데, 모든 대상 엘리먼트의 checked 프로퍼티를 읽어 체크박스의 체크 여부를 확인해야 하기 때문이다.
+- 코드 
+    ```jsx
+      <div className="form-group">
+        <div className="form-check">
+          <input className="form-check-input"
+                 type="checkbox" name="twoScoops"
+                 checked={ this.state.twoScoops }
+                 onChange={ this.updateFromValueCheck }/>
+          <label className="from-check-label">Two Scoops</label>
+        </div>
+      </div>
+    ```
+    - __checked 프로퍼티는 화면에서 체크박스에 체크 표시가 돼야 하는지 지정하며, 또한 사용자가 체크박스에 체크를 하거나 해제하는 변경 이벤트를 처리할 때 사용된다.__
 
-
+1.4. 체크박스를 사용한 배열 채우기
+- 체크박스는 사용자가 선택한 아이템으로 배열을 채우는 데 사용될 수 있으며, 이는 복수 선택이 가능한 select 엘리먼트의 경우보다 더 친숙하다.
+- 코드
+    ```jsx
+      updateFromValueCheck = (event) => {
+        event.persist();
+        this.setState(
+          (state) => {
+            console.log(state)
+            if (event.target.checked) {
+              return {toppings : [...state.toppings,event.target.name]}
+            } else {
+              let index = state.toppings.indexOf(event.target.name);
+              return {toppings: state.toppings.filter(index => index !== event.target.name)}
+            }
+          },
+          () => this.props.submit(this.state));
+      }
     
+      render() {
+        return (
+          <div className="h5 bg-info text-white p-2">
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                className="form-control"
+                name="name"
+                value={this.state.name}
+                onChange={this.updateFormValue}
+              />
+            </div>
+            <div className="form-group">
+              <label>Ice Cream Toppings</label>
+              {this.toppings.map((top) => {
+                return (
+                    <div className="form-check" key={top}>
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        name={top}
+                        checked={this.state.toppings.indexOf(top) > -1}
+                        onChange={this.updateFromValueCheck}
+                    />
+                    <label className="form-check-label">{top}</label>
+                </div>)
+              })}
+            </div>
+          </div>
+        );
+      }
+    ```
+    - updateFormValueCheck 메서드는 이번엔 오직 사용자가 선택한 값들만 포함되도록 toppings 배열의 콘텐츠를 관리한다.
+    - 체크박스의 체크가 해제될 때 배열로부터 해당 값을 제거하는 작업과 체크박스에 체크가 될 때 배열에 해당 값을 추가하는 작업엔 표준 자바스크립트의 방식을 사용됐다.
+    
+1.5 텍스트 영역
+- 평범한 HTML 과는 달리 텍스트 영역, 즉 textarea 엘리먼트의 콘텐츠는 value 프로퍼티를 사용해 읽거나 쓸수 있다.
+

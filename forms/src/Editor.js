@@ -7,6 +7,8 @@ class Editor extends Component {
       name: "Bob",
       flavor: "Vanilla",
       toppings: ["Strawberries"],
+      //twoScoops: false,
+      order: "",
     };
 
     this.flavors = [
@@ -39,6 +41,20 @@ class Editor extends Component {
     );
   };
 
+  updateFromValueCheck = (event) => {
+    event.persist();
+    this.setState(
+      (state) => {
+        if (event.target.checked) {
+          return {toppings : [...state.toppings,event.target.name]}
+        } else {
+          let index = state.toppings.indexOf(event.target.name);
+          return {toppings: state.toppings.filter(index => index !== event.target.name)}
+        }
+      },
+      () => this.props.submit(this.state));
+  }
+
   render() {
     return (
       <div className="h5 bg-info text-white p-2">
@@ -51,23 +67,10 @@ class Editor extends Component {
             onChange={this.updateFormValue}
           />
         </div>
-        <div className="form-group">
-          <label>Ice Cream Flavors</label>
-          {
-            this.flavors.map(flavor=>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  name="flavor"
-                  value={flavor}
-                  checked={this.state.flavor === flavor}
-                  onChange={this.updateFormValue}
-                />
-                <label className="form-check-label">{flavor}</label>
-              </div>
-            )
-          }
+        <div>
+          <label>Order</label>
+          <textarea className="form-control" name="order"
+          value={this.state.order} onChange={this.updateFormValue}/>
         </div>
       </div>
     );
