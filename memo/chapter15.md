@@ -447,3 +447,83 @@ a. 복수의 아이템을 보여주는 select 엘리먼트
 - FormValidator 컴포넌트는 반드시 폼 필드의 조상이여야 하는데, 그래야 버블 단계를 통해 변경 이벤트를 받을 수 있기 때문이다.
 - 또한 ValidationMessage 컴포넌트의 조상이기도 해야하는데, 그래야 공유된 컨텍스트를 통해 검증 메시지에 접근 할수 있기 때문이다.
 
+2.4. 그밖의 엘리먼트와 데이터 타입의 검증
+- 검증 기능은 input 과 textarea 엘리먼트를 직접 다루지 않는다는 점에 주목하기 바란다.
+- 그 대신 상태와 이벤트라는 표준 기능을 이용해 데이터를 리액트의 통제 범위로 가져옴으로써 검증이 가능하며, 또한 컴포넌트가 데이터의 출처를 몰라도 데이터를 다룰 수 있게 한다.
+
+a. 체크박스의 체크 여부
+- 우리가 사용하는 validator 패키지는 오직 문자열 값을 대상으로 하므로, 불리언 값에 대한 검증을 요구하면 에러를 보고한다.
+- 코드
+    ```jsx
+       import React, { Component } from "react";
+       import {FormValidator} from "./FormValidator";
+       import {ValidationMessage} from "./ValidationMessage";
+       
+       class Editor extends Component {
+         constructor(props) {
+           super(props);
+           this.state = {
+             name: "",
+             order: "",
+             email: "",
+             terms: false,
+           };
+       
+           this.rules = {
+             name: { required: true, minlength: 3, alpha: true },
+             terms: { true: true }
+           }
+       
+         }
+       
+         updateFormValue = (event) => {
+           this.setState(
+             {
+               [event.target.name]: event.target.value,
+             });
+         };
+       
+         updateFormValueCheck = (event) => {
+           this.setState({[event.target.name]: event.target.value})
+         }
+       
+         render() {
+           console.log("Edit render!!")
+           return (
+                     <div className="h5 bg-info text-white p-2">
+                       <FormValidator data={this.state} rules={this.rules}
+                                                 submit={this.props.submit}>
+                         <div className="form-group">
+                           <label>Name</label>
+                           <input
+                           className="form-control"
+                           name="name"
+                           value={this.state.name}
+                           onChange={this.updateFormValue}
+                           />
+                           <ValidationMessage field="name"/>
+                         </div>
+                         <div className="form-group">
+                           <div className="form-check">
+                             <input type="checkbox" name="terms"
+                             checked={ this.state.terms}
+                             onChange={this.updateFormValueCheck}/>
+                             <label className="form-ckeck-label">
+                               Agree to terms
+                             </label>
+                           </div>
+                           <ValidationMessage field="terms"/>
+                         </div>
+                       </FormValidator>
+                     </div>
+           );
+         }
+       }
+       
+       export default Editor;
+    ```
+  
+b. 값 일치 여부
+- 어떤 값들은 두번 입력을 받아 확인을 해야 하는 경우가 있다.
+- 예컨대 계정 생성 시 의 패스워드나 이메일 주소등이 그렇다.
+
