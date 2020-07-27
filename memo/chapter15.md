@@ -264,3 +264,186 @@ a. 복수의 아이템을 보여주는 select 엘리먼트
 1.5 텍스트 영역
 - 평범한 HTML 과는 달리 텍스트 영역, 즉 textarea 엘리먼트의 콘텐츠는 value 프로퍼티를 사용해 읽거나 쓸수 있다.
 
+
+## 2. 폼 데이터 검증
+- 데이터 검증은 사용자가 제공한 데이터를 검사해 애플리케이션이 사용할 수 있는 데이터인지 확인하는 과정이다.
+```text
+폼은 가급적 아껴 사용해야 하며, 예컨데 배송 주소 입력과 같이 사용자가 가치 있게 여기는 작업에만 사용해야 한다.
+그 밖의 경우라면 사용자의 작업 흐름을 방해하지 않고 매번 사용자를 짜증 나게 하지 않는 대안을 찾아 데이터를 얻어야 한다.
+```
+- 폼 검증에 있어 검증의 각기 다른 부분들이 HTML과 컴포넌트의 복잡한 계층도에 분포될수 있다 따라서 각기 다른 부분을 연결하기 위해 prop 스레딩 을 하기보다는 컨텍스트를 사용하는 방법이 낫다.
+- 코드
+    ```jsx
+        import React from 'react';
+        
+        
+        export const ValidationContext = React.createContext({
+            getMessagesForField: (field) => []
+        })
+    
+    ```
+    - 각 폼 엘리먼트를 위한 검증 이슈들을 배열에 저장한다.
+    - 또한 각 이슈에 관한 메시지를 해당 엘리먼트와 나란히 보여줄것이다.
+    - 컨텍스트는 특정 필드를 위한 검증 메시지를 리턴하는 함수에 접근할 수 있게 한다.
+    
+2.1. 검증 규칙 정의
+- 코드
+    ```jsx
+      import React from "react";
+      
+      export function ValidateData(data, rules) {
+          let errors = {};
+          Object.keys(data).forEach(field=> {
+              if (rules.hasOwnProperty(field)) {
+                  let fielderrors = [];
+                  let val = data[field];
+                  if (rules[field].required && validator.isEmpty(val)) {
+                      fielderrors.push("Value required");
+                  }
+                  if (!validator.isEmpty(data[field])) {
+                      if (rules[field].minlength && !validator.isLength(val, rules[field].minlength)) {
+                          fielderrors.push(`Enter at least ${rules[field].minlength}` + " characters")
+                      }
+                      if (rules[field].alpha && !validator.isAlpha(val)) {
+                          fielderrors.push("Enter only letters");
+                      }
+                      if (rules[field].email && !validator.isEmail(val)) {
+                          fielderrors.push("Enter a valid email address");
+                      }
+                  }
+                  if (fielderrors.length > 0) {
+                      errors[field] = fielderrors;
+                  }
+              }
+          })
+          return errors;
+      }
+    ```
+    - ValidateData 함수는 폼 값들을 프로퍼티로 갖는 객체 하나와 값에 적용할 검증 규칙들을 지정하는 객체 하나를 받는다.
+    - validator 패키지는 광범위한 검사를 할 수 있는 메서드를 제공한다.
+    - validator 패키지가 제공하는 메서드
+        ```text
+        |     메서드     |   설명
+        | isEmpty       | 값이 빈 문자열이면 true를 리턴한다.
+        | isLength      | 값이 최소한의 길이를 초과하면 true를 리턴한다.
+        | isAlpha       | 값이 알파벳 문자만 포함하면 true를 리턴한다.
+        | isEmail       | 값이 올바른 형식의 이메일 주소라면 true를 리턴한다.
+        | isEqual       | 두 값이 동일하다면 true를 리턴한다.  
+        ```
+    
+- 코드 
+    ```jsx
+       import React, {Component, Fragment} from 'react';
+       import {ValidationContext} from "./ValidationContext";
+       
+       
+       export class FormValidator extends Component {
+       
+           constructor(props) {
+               super(props);
+               this.state = {
+                   errors: {},
+                   dirty: {},
+                   formSubmitted: false,
+                   getMessagesForField: this.getMessagesForField
+               }
+           }
+       
+           static getDerivedStateFromProps(props, state) {
+               return {
+                 errors: ValidateData(props.data, props.rules)
+               };
+           }
+       
+           get formValid() {
+               return Object.keys(this.state.errors).length === 0;
+           }
+       
+           handleChange = (ev) => {
+               let name = ev.target.name;
+               this.setState(state => state.dirty[name] = true)
+           }
+       
+           handleClick = (ev) => {
+               this.setState({ formSubmiited: true }, () => {
+                   if (this.formValid) {
+                       this.props.submit(this.props.data)
+                   }
+               })
+           }
+       
+           getButtonClasses() {
+               return this.state.formSubmiited && !this.formValid ? "btn-danger" : "btn-primary";
+           }
+       
+           getMessagesForField = (field) => {
+               return (this.state.formSubmitted || this.state.dirty[feild]) ? this.state.errors[field] || [] : []
+           }
+       
+           render() {
+               return (
+                   <Fragment>
+                       <ValidationContext.Provider value={this.state}>
+                           <div onChange={this.handleChange}>
+                               { this.props.children }
+                           </div>
+                       </ValidationContext.Provider>
+       
+                       <div>
+                           <button className={ `btn ${ this.getButtonClasses() }`}
+                                   disabled={ this.state.formSubmitted && !this.formValid }>
+                               Submit
+                           </button>
+                       </div>
+                   </Fragment>
+               )
+           }
+       }   
+    ```
+    - 검증 작업은 getDerivedStateFromProps 라는 생명주기 메서드에서 수행되는데, 이 메서드는 컴포넌트가 받은 prop을 기준으로 상태를 변경할 수 있는 기회를 준다.
+    - 컴포넌트는 검증받을 폼 데이터를 포함하는 data prop 와 검증 규칙이 정의된 rules prop 을 받고, 이 둘을 정의했던 ValidateData 함수에 전달한다.
+    - ValidateData 함수의 결과는 state.errors 프로퍼티에 할당되는데, 이는 검증 이슈를 갖는 각 폼 필드를 위한 프로퍼티와 사용자에게 보여야 하는 메시지들의 배열을 포함하는 객체다.
+    - __폼검증은 사용자가 필드를 편집하거나 폼 제출을 시도하기 전까지는 시작되면 안된다.__
+    
+    ```jsx
+      <div onChange={this.handleChange}>
+          { this.props.children }
+      </div>
+    ```
+    - handleChange 메서드는 변경 이벤트의 대상 엘리먼트의 name prop 값을 dirty 상태 객체에 추가한다. (폼 검증에 있어서 사용자가 시작하기 전까지의 엘리먼트를 프리스틴 상태, 편집을 시작한 후를 더티 상태라고 한다.)
+    - 컴포넌트는 버튼이 클릭됐을 때 formSubmitted 상태 프로퍼티를 변경하는 핸들러와 함께 button 엘리먼트를 사용자에게 보여준다.
+    - 만약 폼이 유효하지 않은 상황에서 버튼이 클릭되면 문제가 해결될 때까지 버튼은 사용이 불가능해지고 색상이 바뀜으로써 데이터가 처리 될수 없음을 보여준다.
+    
+    ```jsx
+        <button className={ `btn ${ this.getButtonClasses() }`}
+                disabled={ this.state.formSubmitted && !this.formValid }>
+            Submit
+        </button>
+    ```
+    - 만약 검증 결과에 문제가 없다면 handleClick 메서드는 검증된 데이터를 인자로 해서 submit 이라는 함수 prop를 호출한다.
+
+2.2. 검증 메시지 표시
+- 코드
+    ```jsx
+      import React, {Component} from 'react';
+      import {ValidationContext} from "./ValidationContext";
+      
+      
+      export class ValidationMessage extends Component {
+      
+          static contextType = ValidationContext
+      
+          render() {
+              return this.context.getMessagesForField(this.props.field).map(err =>
+                  <div className="small bg-danger text-white mt-1 p-1" key={err}>{ err }</div>
+              )
+          }
+      }
+    ```
+    - 이 컴포넌트는 FormValidator 컴포넌트가 제공한 컨텍스트를 사용해 field prop에서 지정한 이름의 폼 필드를 위한 검증 메시지를 얻는다.
+    - 이 컴포넌트는 단지 메시지를 요청하고 보여줄 뿐이다. 보여줄 메시지가 없을 경우엔 콘텐츠를 렌더링 하지 않는다.
+    
+2.3. 폼 검증 적용
+- FormValidator 컴포넌트는 반드시 폼 필드의 조상이여야 하는데, 그래야 버블 단계를 통해 변경 이벤트를 받을 수 있기 때문이다.
+- 또한 ValidationMessage 컴포넌트의 조상이기도 해야하는데, 그래야 공유된 컨텍스트를 통해 검증 메시지에 접근 할수 있기 때문이다.
+
