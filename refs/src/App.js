@@ -1,25 +1,24 @@
-import React, { useState } from "react";
-import Editor from "./Editor";
-import ProductTable from "./ProductTable";
+import React from "react";
+
+import FormField from "./FormField";
 
 function App() {
-  const [products, setProducts] = useState([]);
+    const fieldRef = React.createRef();
 
-  const appProduct = (product) => {
-    if (products.indexOf(product.name) === -1) {
-      setProducts([...products, product])
-    }
-  }
+    const handleClick = () => {
+        fieldRef.current.focus();
+    };
 
-  return <div>
-    <Editor callback={appProduct}/>
-    <h6 className="bg-secondary text-white m-2 p-2">Products</h6>
-    <div className="m-2">
-      {
-        products.length === 0? <div className="text-center">No Products</div> : <ProductTable products={products}/>
-      }
-    </div>
-  </div>
+    return (
+        <div className="m-2">
+            <FormField label="Name" fieldRef={fieldRef}/>
+            <div className="text-center m-2">
+                <button className="btn btn-primary" onClick={handleClick}>
+                    Focus
+                </button>
+            </div>
+        </div>
+    );
 }
 
 export default App;

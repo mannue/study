@@ -443,5 +443,38 @@ ref 를 과도하게 사용하는 컴포넌트는 관리가 힘들며 특정 브
         - 리액트는 스냅샷 객체에 대한 특별한 형식을 강제하지 않으며, getSnapshotBeforeUpdate 메서드는 쓸모만 있다면 어떤 형식의 데이터라도 리턴 할 수 있다.
         - __getSnapshotBeforeUpdate 와 componentDidUpdate 메서드는 업데이트 단계에서 항상 호출된다 이점에서 DOM 갱신이 완료된 후의 엘리먼트 값이 스냅샷의 값과 다를때만 스냅샷이 적용 되게 한 이유다.__
         
+## 4. 다른 라이브러리나 프레임워크를 위한 ref
+- 서서히 리액트로 전환해가는 프로젝트에 있어서 어떤 컴포넌트는 다른 라이브러리나 프레임워크로 작성된 기존 기능과 상호 작동이 필요할 수 있다.
+- 가장 흔한 예가 제이쿼리 다.
+
+- 제이쿼리 코드
+    ```jsx
+        var $ = require('jquery')
+        
+        export function ColorInvalidElement(rootElement) {
+            $(rootElement)
+                .find("input:invalid").addClass("border-danger")
+                .removeClass("border-success")
+                .end()
+                .find("input:valid").removeClass("border-danger")
+                .addClass("border-success")
+        }
+    ```
+    - 이 제리쿼리 구문은 invalid 라는 가상 클래스가 할당된 모든 input 엘리먼트를 찾아 border-danger 클래스를 추가하며, 또한 valid 가상 클래스인 모든 input 엘리먼트에는 border-success 클래스를 추가한다.
+    - valid 와 invalid 는 엘리먼트의 검증 상태를 나타내는 HTML 제약 검증 API가 사용하는 가상 클래스다.
     
-    
+## 5. 자식 컴포넌트의 콘텐츠 접근
+- ref 는 리액트가 특별히 취급하는 prop 이다. 
+- __이는 자식 컴포넌트가 렌더링하는 DOM 엘리먼트에 대한 ref 를 사용할 때 주의가 필요하다는 뜻이다.__
+- 가장 쉬운 접근법은 ref 객체 나 콜백 함수를 ref 가 다른 이름을 사용하는 것이다.
+- 그러면 리액트는 그 ref 를 여느 prop 과 마찬가지로 전달 할 것이다.
+
+```text
+자식 컴포넌트의 콘텐츠에 접근하는 일은 신중을 가해야 한다. 작성과 테스트가 힘든 강하게 결합
+된 컴포넌트들이 만들어지기 때문이다. 가능하다면 컴포넌트들 사이의 통신에는 prop 를 사용하기 바란다.
+```
+
+5.1. ref 포워딩
+- 리액트는 자식에게 ref 를 전달하는 또 다른 방법을 제공한다.
+- 이른바 ref 바인딩 이라고 하는데, 일반적인 prop 대신 ref 를 사용할 수 있게 하는 방법이다.
+
