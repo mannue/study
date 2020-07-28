@@ -11,9 +11,27 @@ class Editor extends Component {
       price: { label: "Price", name: "price", validation: { type: "number", required: true, min: 5}}
     }
     this.state = {
-      errors: {}
+      errors: {},
+      wrapContent: false,
     }
   }
+
+  componentDidUpdate(oldProps, oldState, snapshot) {
+    snapshot.forEach(item=> {
+      let element = this.formElements[item.name].element
+      if (element.value !== item.value) {
+        element.value = item.value
+      }
+    })
+  }
+
+  getSnapshotBeforeUpdate(prevProps, prevState) {
+    return Object.values(this.formElements).map(item => {
+      return {name: [item.name], value: item.element.value }
+    })
+  }
+
+
 
   setElement = (element) => {
     if (element !== null) {
@@ -28,7 +46,6 @@ class Editor extends Component {
         data[v.element.name] = v.element.value;
         v.element.value = "";
       });
-      console.log(`data: ${JSON.stringify(data)}`)
       this.props.callback(data)
       this.formElements.name.element.focus();
     }
@@ -36,7 +53,6 @@ class Editor extends Component {
 
   validateFormElement = (name) => {
     let errors = GetValidationMessages(this.formElements[name].element);
-    console.log(errors)
     this.setState(state => state.errors[name] = errors);
     return errors.length === 0;
   }
@@ -51,28 +67,49 @@ class Editor extends Component {
     return valid;
   }
 
+  toggleWrap = () => {
+    this.setState(state => state.wrapContent = !state.wrapContent)
+  }
+
+  wrapContent(content) {
+    return this.state.wrapContent ? <div className="bg-secondary p-2">
+      <div className="bg-light">{ content }</div>
+    </div> : content;
+  }
+
   render() {
-    return <Fragment>
-              {
-                Object.values(this.formElements).map( elem =>
-                    <div className="form-group p-2" key={ elem.name } >
-                      <label>{elem.label}</label>
-                      <input
-                          className="form-control"
-                          name={elem.name}
-                          autoFocus={elem.name === "name"}
-                          ref={this.setElement}
-                          onChange={ ()=> this.validateFormElement(elem.name)}
-                          { ...elem.validation}/>
-                          <ValidationDisplay errors={this.state.errors[elem.name]} />
-                    </div>)
-              }
-              <div className="text-center">
-                <button className="btn btn-primary" onClick={this.handleAdd}>
-                  Add
-                </button>
-              </div>
-            </Fragment>
+    return this.wrapContent(
+        <Fragment>
+          <div className="form-group text-center p-2">
+            <div className="form-check">
+              <input className="form-check-input"
+                     type="checkbox"
+                     checked={this.state.wrapContent}
+                     onChange={this.toggleWrap}/>
+              <label className="form-check-label">Wrap Content</label>
+            </div>
+          </div>
+          {
+            Object.values(this.formElements).map( elem =>
+                <div className="form-group p-2" key={ elem.name } >
+                  <label>{elem.label}</label>
+                  <input
+                      className="form-control"
+                      name={elem.name}
+                      autoFocus={elem.name === "name"}
+                      ref={this.setElement}
+                      onChange={ ()=> this.validateFormElement(elem.name)}
+                      { ...elem.validation}/>
+                  <ValidationDisplay errors={this.state.errors[elem.name]} />
+                </div>)
+          }
+          <div className="text-center">
+            <button className="btn btn-primary" onClick={this.handleAdd}>
+              Add
+            </button>
+          </div>
+        </Fragment>
+    )
   }
 }
 

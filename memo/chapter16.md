@@ -294,3 +294,154 @@ ref 를 과도하게 사용하는 컴포넌트는 관리가 힘들며 특정 브
     ```
     - input 엘리먼트에 formElements 의 validation 속성을 적용함으로써 HTML 자체 검증하도록 한다.
         
+## 3. ref 와 생명주기
+- __ref 는 리액트가 컴포넌트의 render 메서드를 호출하기 전까지 값을 할당받지 못한다.__
+- __createRef 메서드를 사용하는 경우라면 컴포넌트가 자신의 콘텐츠를 렌더링 하기 전까지 current 프로퍼티는 값을 할당받지 못한다.__
+- __콜백 ref 역시 컴포넌트의 렌더링 전까지 자신의 메서드를 호출하지 못한다.__
+- __ref 의 할당은 컴포넌트 생명주기에 있어서 후반에 일어날 것이다.__
+- DOM 엘리먼트는 렌더링 단계 이전엔 생성되지 않는다. 즉 리액트는 render 메서드가 호출되기 전까지는 ref 가 참조할 엘리먼트를 만들지 않는다는 뜻이다.
+- __ref 와 연결된 엘리먼트는 오직 componentDidMount 와 componentDidUpdate 메서드에서 접근이 가능하다.__
+- 이 생명주기 메서드들은 렌더링이 완료되고 DOM 엘리먼트가 생성되거나 갱신된 후에 사용되기 때문이다.
+- ref 를 사용하는 결과 중 하나는, 리액트가 DOM 의 엘리먼트를 교체하는 경우 컴포넌트가 컨텍스트를 보존하기 위해 상태에 의존할 수 없다는 점이다.
+- 리액트는 DOM 변경을 최소화 하려고 노력하겠지만, 그럼에도 애플리케이션의일생에 걸쳐 사용되는 엘리먼트에 의존하면 안된다.
+
+- 코드
+    ```jsx
+         import React, { Component, Fragment } from "react";
+         import {GetValidationMessages} from "./ValidationMessages";
+         import {ValidationDisplay} from "./ValidationDisplay";
+         
+         class Editor extends Component {
+           constructor(props) {
+             super(props);
+             this.formElements = {
+               name: { label: "Name", name: "name", validation: { required: true, minLength: 3}},
+               category: { label: "Category", name: "category", validation: { required: true, minLength: 5}},
+               price: { label: "Price", name: "price", validation: { type: "number", required: true, min: 5}}
+             }
+             this.state = {
+               errors: {},
+               wrapContent: false,
+             }
+           }
+         
+           setElement = (element) => {
+             if (element !== null) {
+               this.formElements[element.name].element = element;
+             }
+           }
+         
+           handleAdd = () => {
+             if (this.validateFormElements()) {
+               let data = {};
+               Object.values(this.formElements).forEach(v => {
+                 data[v.element.name] = v.element.value;
+                 v.element.value = "";
+               });
+               console.log(`data: ${JSON.stringify(data)}`)
+               this.props.callback(data)
+               this.formElements.name.element.focus();
+             }
+           };
+         
+           validateFormElement = (name) => {
+             let errors = GetValidationMessages(this.formElements[name].element);
+             console.log(errors)
+             this.setState(state => state.errors[name] = errors);
+             return errors.length === 0;
+           }
+         
+           validateFormElements = () => {
+             let valid = true;
+             Object.keys(this.formElements).forEach(name => {
+               if (!this.validateFormElement(name)) {
+                 valid=false;
+               }}
+             )
+             return valid;
+           }
+         
+           toggleWrap = () => {
+             this.setState(state => state.wrapContent = !state.wrapContent)
+           }
+         
+           wrapContent(content) {
+             return this.state.wrapContent ? <div className="bg-secondary p-2">
+               <div className="bg-light">{ content }</div>
+             </div> : content;
+           }
+         
+           render() {
+             return this.wrapContent(
+                 <Fragment>
+                   <div className="form-group text-center p-2">
+                     <div className="form-check">
+                       <input className="form-check-input"
+                              type="checkbox"
+                              checked={this.state.wrapContent}
+                              onChange={this.toggleWrap}/>
+                       <label className="form-check-label">Wrap Content</label>
+                     </div>
+                   </div>
+                   {
+                     Object.values(this.formElements).map( elem =>
+                         <div className="form-group p-2" key={ elem.name } >
+                           <label>{elem.label}</label>
+                           <input
+                               className="form-control"
+                               name={elem.name}
+                               autoFocus={elem.name === "name"}
+                               ref={this.setElement}
+                               onChange={ ()=> this.validateFormElement(elem.name)}
+                               { ...elem.validation}/>
+                           <ValidationDisplay errors={this.state.errors[elem.name]} />
+                         </div>)
+                   }
+                   <div className="text-center">
+                     <button className="btn btn-primary" onClick={this.handleAdd}>
+                       Add
+                     </button>
+                   </div>
+                 </Fragment>
+             )
+           }
+         }
+         
+         export default Editor;
+    ```
+    - 체크 시 input 엘리먼트에 입력됐던 텍스트는 사라지며, 탐지된 모든 검증 에러가 컴포넌트 상태 데이터의 일부이므로 입력했던 값이 사라졌음에도 불구하고 에러 메시지는 새 input 엘리먼트와 나란히 나타날 것이라는 점이다.
+    - 이 문제를 해결 하기 위해 상태 유지 컴포넌트엔 getSnapshotBeforeUpdate 라는 생명 주기 메서드가 있다.
+    ```text
+               --------- Snapshot 객체 --------->--->
+               |                                     |
+       render -----> getSnapshotBeforeUpdate ----> componentDidUpdate
+    ```
+    - 이 getSnapshotBeforeUpdate 메서드는 DOM 갱신 이전의 현재 콘텐츠를 조사해 커스텀 스냅샷 객체를 생성한다.
+    - DOM 갱신이 완료되면 componentDidUpdate 메서드가 스냅샷 객체를 받으며 호출된다. 따라서 컴포넌트는 현재 DOM 에 존재하는 엘리먼트를 다룰 수 있게 된다.
+    ```text
+     조상의 콘텐츠가 변경됨에 따라 컴포넌트가 언마운트되고 다시 생성된 경우엔 스냅샷으로 컨텍스트를 보존하지 못한다.
+     그런 상황이라면 componentWillUnmount 메서드를 사용해 ref 에 접근할 수 있으며, 데이터를 컨텍스트를 통해 보관할수 있다.
+    ```
+    - 코드
+        ```jsx
+           componentDidUpdate(oldProps, oldState, snapshot) {
+              snapshot.forEach(item=> {
+                let element = this.formElements[item.name].element
+                if (element.value !== item.value) {
+                  element.value = item.value
+                }
+              })
+            }
+          
+            getSnapshotBeforeUpdate(prevProps, prevState) {
+              return Object.values(this.formElements).map(item => {
+                return {name: [item.name], value: item.element.value }
+              })
+            }
+        ```
+        - getSnapshotBeforeUpdate 메서드는 DOM 갱신 이전의 props 와 상태 객체를 받고 DOM 갱신 후에 componentDidUpdate 메서드에 전달될 객체를 리턴한다.
+        - 리액트는 스냅샷 객체에 대한 특별한 형식을 강제하지 않으며, getSnapshotBeforeUpdate 메서드는 쓸모만 있다면 어떤 형식의 데이터라도 리턴 할 수 있다.
+        - __getSnapshotBeforeUpdate 와 componentDidUpdate 메서드는 업데이트 단계에서 항상 호출된다 이점에서 DOM 갱신이 완료된 후의 엘리먼트 값이 스냅샷의 값과 다를때만 스냅샷이 적용 되게 한 이유다.__
+        
+    
+    
