@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
 
+export const ForwardFormField = React.forwardRef((props , ref) =>
+    <FormField {...props} fieldRef={ref}/>)
+
 class FormField extends Component {
     constructor(props) {
         super(props);

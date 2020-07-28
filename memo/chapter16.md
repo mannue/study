@@ -477,4 +477,70 @@ ref 를 과도하게 사용하는 컴포넌트는 관리가 힘들며 특정 브
 5.1. ref 포워딩
 - 리액트는 자식에게 ref 를 전달하는 또 다른 방법을 제공한다.
 - 이른바 ref 바인딩 이라고 하는데, 일반적인 prop 대신 ref 를 사용할 수 있게 하는 방법이다.
+- 코드
+    ```jsx
+          import React, {Component} from 'react';
+          
+          export const ForwardFormField = React.forwardRef((props , ref) => {
+              <FormField {...props} fieldRef={ref}/>
+          })
+          
+          class FormField extends Component {
+              constructor(props) {
+                  super(props);
+                  this.state = {
+                      fieldValue: ""
+                  }
+              }
+          
+              handleChange = (ev) => {
+                  this.setState({
+                      fieldValue: ev.target.value
+                  })
+              }
+          
+              render() {
+                  return (
+                      <div className="form-group">
+                          <label>{ this.props.label}</label>
+                          <input className="form-control" value={this.state.fieldValue}
+                                 onChange={this.handleChange} ref={this.props.fieldRef }/>
+          
+                      </div>
+                  );
+              }
+          }
+          
+          export default FormField;
+    ```
+    - React.forwardRef 메서드는 props 와 ref 값을 받아 콘텐츠를 렌더링하는 함수에 전달된다.
+    - 여기서 받은 ref 값을 fieldRef prop 에 넘겼는데, fieldRef 는 FormField 컴포넌트가 사용할 prop 의 이름이다.
+    ```jsx
+      import React from "react";
+      import {ForwardFormField} from "./FormField";
+      
+      
+      function App() {
+          const fieldRef = React.createRef();
+      
+          const handleClick = () => {
+              console.log(fieldRef)
+              fieldRef.current.focus();
+          };
+      
+          return (
+              <div className="m-2">
+                  <ForwardFormField label="Name" ref={fieldRef}/>
+                  <div className="text-center m-2">
+                      <button className="btn btn-primary" onClick={handleClick}>
+                          Focus
+                      </button>
+                  </div>
+              </div>
+          );
+      }
+      
+      export default App;
 
+    ```
+    - 동일한 결과를 가져오지만 이제 App 컴포넌트는 자식 컴포넌트 내부에서 처리되는 ref 에 대해 특별히 알 필요가 없다는 점이 달라졌다.
