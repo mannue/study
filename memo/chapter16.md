@@ -63,5 +63,234 @@ ref 를 과도하게 사용하는 컴포넌트는 관리가 힘들며 특정 브
     ```
 
 ## 2. 비제어 폼 컴포넌트
-- 
+- 리액트는 각 폼 엘리먼트의 콘텐츠에 대한 책임을 지며, 값 저장은 상태 데이터 프로퍼티로 값 변경은 이벤트 핸들러로 처리 한다. 
+- 폼 엘리먼트에 대한 접근에 ref 가 사용되며, 브라우저가 엘리먼트의 값 관리와 변경 처리의 책임을 진다. 
+- 코드
+    ```jsx
+        import React, { Component, Fragment } from "react";
+        
+        class Editor extends Component {
+          constructor(props) {
+            super(props);
+            /*    this.state = {
+              name: "",
+              category: "",
+              price: "",
+            };*/
+            this.nameRef = React.createRef();
+            this.categoryRef = React.createRef();
+            this.priceRef = React.createRef();
+          }
+          /*
+        
+          handleChange = (event) => {
+            event.persist();
+            this.setState((state) => (state[event.target.name] = event.target.value));
+          };
+        */
+        
+          handleAdd = () => {
+            this.props.callback({
+              name: this.nameRef.current.value,
+              category: this.categoryRef.current.value,
+              price: this.priceRef.current.value,
+            });
+        
+            this.nameRef.current.value = "";
+            this.categoryRef.current.value = "";
+            this.priceRef.current.value = "";
+            this.nameRef.current.focus();
+          };
+        
+          render() {
+            return (
+              <Fragment>
+                <div className="form-group p-2">
+                  <label>Name</label>
+                  <input
+                    className="form-control"
+                    name="name"
+                    autoFocus={true}
+                    ref={this.nameRef}
+                  />
+                </div>
+                <div className="form-group p-2">
+                  <label>Category</label>
+                  <input
+                    className="form-control"
+                    name="category"
+                    ref={this.categoryRef}
+                  />
+                </div>
+                <div className="form-group p-2">
+                  <label>Price</label>
+                  <input
+                    className="form-control"
+                    name="price"
+                    ref={this.priceRef}
+                  />
+                </div>
+                <div className="text-center">
+                  <button className="btn btn-primary" onClick={this.handleAdd}>
+                    Add
+                  </button>
+                </div>
+              </Fragment>
+            );
+          }
+        }
+        
+        export default Editor;
+    ```
+    - 이 코드의 결과는 이전의 예제와 동일한다. 그러나 내부적으로 리액트는 더 이상 엘리먼트의 값을 관리하거나 변경 이벤트에 응답할 책임을 갖지 않는다.
+
+- 콜백 ref 사용하는 방법
+    ```jsx
+      import React, { Component, Fragment } from "react";
+      
+      class Editor extends Component {
+        constructor(props) {
+          super(props);
+          this.formElements = {
+            name: { },
+            category: { },
+            price: { }
+          }
+        }
+      
+        setElement = (element) => {
+          console.log(element)
+          if (element !== null) {
+            this.formElements[element.name].element = element;
+          }
+          console.log(this.formElements)
+        }
+      
+        handleAdd = () => {
+          let data = {};
+          Object.values(this.formElements).forEach(v => {
+            data[v.element.name] = v.element.value;
+            v.element.value = "";
+          });
+          console.log(`data: ${JSON.stringify(data)}`)
+          this.props.callback(data)
+          this.formElements.name.element.focus();
+        };
+      
+        render() {
+          return (
+            <Fragment>
+              <div className="form-group p-2">
+                <label>Name</label>
+                <input
+                  className="form-control"
+                  name="name"
+                  autoFocus={true}
+                  ref={this.setElement}
+                />
+              </div>
+              <div className="form-group p-2">
+                <label>Category</label>
+                <input
+                  className="form-control"
+                  name="category"
+                  ref={this.setElement}
+                />
+              </div>
+              <div className="form-group p-2">
+                <label>Price</label>
+                <input
+                  className="form-control"
+                  name="price"
+                  ref={this.setElement}
+                />
+              </div>
+              <div className="text-center">
+                <button className="btn btn-primary" onClick={this.handleAdd}>
+                  Add
+                </button>
+              </div>
+            </Fragment>
+          );
+        }
+      }
+      
+      export default Editor;
+    ```
+    - 각 input 엘리먼트의 ref 프로퍼티 값으로 콘텐츠가 렌더링될 때 호출되는 메서드가 지정됐다.
+    - setElement 메서드는 엘리먼트가 언마운트됐다면 null 을 인자로 받으며 호출된다. 따라서 엘리먼트 제거에 따른 별도의 정리를 할 필요 없이 단지 setElement 메서드에서 null 값 여부만 확인하면 된다.
+    ```jsx
+        setElement = (element) => {
+          console.log(element)
+          if (element !== null) {
+            this.formElements[element.name].element = element;
+          }
+          console.log(this.formElements)
+        }
+    ```
+2.1. 비제어 폼 컴포넌트의 검증
+- __폼 엘리먼트엔 HTML 제약 검증 API 의 검증 기능이 내장돼 있다.__
+- 이 검증 API 는 다음과 같은 식의 객체를 사용해 엘리먼트의 검증 상태를 기술한다.
+    ```text
+      {
+          valueMissing: true, tooShort: false, rangeUnderflow: false
+      }
+    ``` 
+    - 반드시 값을 가져야 한다고 지정된 엘리먼트가 값이 없다면 valueMissing 프로퍼티는 true 를 리턴한다.
+    - 엘리먼트의 값 길이가 검증 규칙에 의해 지정된 문자의 수보다 적다면 tooShort 프로퍼티는 true 를 리턴한다.
+    - 지정된 최솟값 보다 엘리먼트의 숫자값이 더 작으면 rangeUnderflow 프로퍼티는 true를 리턴한다.
     
+    ```jsx
+      export function GetValidationMessages(elem) {
+          let errors = [];
+          if (!elem.checkValidity()) {
+              if (elem.validity.valueMissing) {
+                  errors.push("Value required");
+              }
+              if (elem.validity.tooShort) {
+                  errors.push("Value is too short")
+              }
+              if (elem.validity.rangeUnderflow) {
+                  errors.push("Value is too small")
+              }
+          }
+          return errors;
+      }
+    ```
+    - GetValidationMessage 함수는 HTML 엘리먼트 객체를 받아 checkValidity 메서드를 호출함으로써 브라우저에게 데이터 검증을 요청한다.
+    - checkValidity 메서드는 엘리먼트의 값이 유효하다면 true 를 그렇지 않으면 false 를 리턴한다.
+    - 만약 엘리먼트의  값이 유효하지 않다면 엘리먼트의 validity 프로퍼티를 확인해, valueMissing, tooShort, rangeUnderflow 프로퍼티 중에 true 가 있다면 사용자에게 보여줄 메시지를 에러의 배열에 추가할 수 있다.
+    
+    ```jsx
+      import React, { Component } from "react";
+      
+      const propTypes = {};
+      
+      export class ValidationDisplay extends Component {
+        render() {
+          return this.props.errors ? this.props.errors.map( err =>
+          <div className="small bg-danger text-white mt-1 p-1"
+          key={err}>
+              {err}
+          </div>): null
+        }
+      }
+    ```
+    - 이 컴포넌트는 에러 메시지의 배열을 받아 화면에 보여준다. 만약 에러 메시지가 전혀 없다면 null 을 리턴함으로써 보여줄 콘텐츠가 없음을 나타낸다.
+    ```jsx
+      this.formElements = {
+        name: { label: "Name", name: "name", validation: { required: true, minLength: 3}},
+        category: { label: "Category", name: "category", validation: { required: true, minLength: 5}},
+        price: { label: "Price", name: "price", validation: { type: "number", required: true, min: 5}}
+      }
+  
+      <input
+        className="form-control"
+        name={elem.name}
+        autoFocus={elem.name === "name"}
+        ref={this.setElement}
+        onChange={ ()=> this.validateFormElement(elem.name)}
+        { ...elem.validation}/>
+    ```
+    - input 엘리먼트에 formElements 의 validation 속성을 적용함으로써 HTML 자체 검증하도록 한다.
+        
