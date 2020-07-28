@@ -544,3 +544,33 @@ ref 를 과도하게 사용하는 컴포넌트는 관리가 힘들며 특정 브
 
     ```
     - 동일한 결과를 가져오지만 이제 App 컴포넌트는 자식 컴포넌트 내부에서 처리되는 ref 에 대해 특별히 알 필요가 없다는 점이 달라졌다.
+    
+# 6. 포털 
+- __포털은 컴포넌트가 부모 콘텐츠의 일부로서가 아닌 특정 DOM 엘리먼트 안에서 자신의 콘텐츠를 렌더링 할 수 있게 한다.__
+- 이는 통상적인 리액트의 컴포넌트 모델을 벗어나는 일이다.
+- 대상 엘리먼트가 애플리케이션의 외부에서 생성되고 관리돼야 하므로, 다른 컴포넌트 안에 콘텐츠를 렌더링 할때 포털을 사용할 수없다.
+- 결론적으로 포털은 사용자에게 보여줄 대화상자나 모달 경고창을 만드는 경우, 또는 리액트를 다른 프레임워크나 라이브러리가 만든 콘텐츠에 통합하는 경우등 제한된 상황에서만 유용한 기능이다.
+
+- 코드
+    ```jsx
+      import React, {Component} from 'react';
+      import ReactDOM from "react-dom"
+      
+      class PortalWrapper extends Component {
+          constructor(props) {
+              super(props);
+              this.protalElement = document.getElementById("portal")
+          }
+      
+          render() {
+              return ReactDOM.createPortal(
+                  <div className="border p-3">{
+                      this.props.children
+                  }</div>
+              )
+          }
+      }
+      
+      export default PortalWrapper;
+    ```
+    - 포털의 콘텐츠가 애플리케이션의 외부에서 렌더링 됨에도 이벤트 버블과 ref 할당 등이 가능하다.
