@@ -16,6 +16,7 @@ function App(props) {
     setTotal(fieldValues.reduce((total, val) => (total += val), 0));
   };
 
+  // throw new Error("something went wrong")
   return (
     <div className="m-2">
       <h5 className="bg-primary text-white text-center p-2">{title}</h5>
