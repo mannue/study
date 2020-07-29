@@ -141,6 +141,78 @@
           expect(count).toBe(0)
       })
     ```
-    - 
+    - 새로 추가한 첫번째 테스트는 엔자임의 mount 함수를 사용해 App 과 그 자손들을 모두 렌더링 한다.
     
+# 4. props, 상태, 메서드 이벤트를 사용한 테스트
+- 컴포넌트가 렌더링한 콘텐츠는 사용자의 입력이나 갱신의 응답으로서 변경 될수 있다.
+- 행위 테스트를 위한 엔자임 메서드
+```text
+|        메서드        |   설명
+| instance()          | 컴포넌트 객체를 리턴한다.
+| prop(key)           | 지정한 prop 의 값을 리턴한다. 
+| props()             | 컴포넌트의 모든 prop 을 리턴한다.
+| setProps(props)     | 지정한 새 props 를 기존의 props 에 병합한다.
+| state(key)          | 지정한 상태 값을 얻는다. 아무런 값도 지정하지 않았다면 컴포넌트의 모든 상태 데이터가 리턴된다.
+| setState(state)     | 컴포넌트의 상태 데이터를 변경하고 컴포넌트가 다시 렌더링되게 한다.
+| simulate(event,args)| 지정한 이벤트를 컴포넌트에 부착한다.
+| update()            | 컴포넌트를 강제로 다시 렌더링 되게 한다
+```
+4.1. props 를 반영하는지 확인하는 테스트
+```jsx
+  import React from "react";
+  import Adapter from "enzyme-adapter-react-16"
+  import Enzyme, { mount } from "enzyme";
+  import App from "./App"
   
+  Enzyme.configure({ adapter: new Adapter() });
+  it("uses title prop", () => {
+      const titleVal = "test title";
+      const wrapper = mount(<App title={titleVal}/>);
+  
+      const firstTitle = wrapper.find("h5").text();
+      const stateValue = wrapper.state("title");
+  
+      expect(firstTitle).toBe(titleVal);
+      expect(stateValue).toBe(titleVal);
+  })
+```
+ 
+4.2.메서드 테스트
+```jsx
+  it('updates state data',() => {
+     const wrapper = shallow(<App/>)
+     const values = [10,20,30]
+     values.forEach((val, index) => {
+         wrapper.instance().updateFieldValue(index + 1, val);
+     })
+      wrapper.instance().updateTotal();
+     expect(wrapper.state("total")).toBe(values.reduce((total, val)=> total + val),0)
+  });
+```
+
+4.3. 이벤트 테스트
+- simulate 메서드는 컴포넌트의 이벤트 핸들러에게 이벤트를 전달할 때 사용된다.
+- 이런 유형의 테스트는 신중해야 하는데, 컴포넌트의 이벤트 처리 능력보다는 리액트의 이벤트 전달 능력만을 테스트하고 끝내기 십상이기 때문이다.
+- 따라서 대부분의 경우엔 이벤트의 응답으로 실행될 메서드를 직접 호출하는 방법이 더 낫다.
+- 코드
+    ```jsx
+      button.simulate("click")
+    ```
+  
+4.4. 컴포넌트 상호작용 테스트
+- 코드
+    ```jsx
+      it('child function prop updates state ',  () => {
+          const wrapper = mount(<App/>)
+          const vaInput = wrapper.find(ValueInput).first()
+          const inputElem = vaInput.find("input").first()
+          
+          inputElem.simulate("change", { target: { value: "100"}})
+          wrapper.instance().updateTotal();
+          
+          expect(vaInput.state("fieldValue")).toBe("100");
+          expect(wrapper.state("total")).toBe(100)
+      }); 
+    ```
+    - ValueInput 이 렌더링한 input 엘리먼트를 찾아 변경 이벤트를 촉발하는데, 이때 컴포넌트 핸들러에 공급할 값을 인자로 전달한다.
+    
