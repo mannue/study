@@ -63,7 +63,7 @@ function App() {
 
 export default App;
 ```
-2.1 children prop 다루기 
+###2.1 children prop 다루기 
 - children prop은 컴포넌트가 자식에게 서비스를 제공할 수 있을때 유용하지만, 자식이 제공하는 것에 대해 알지 못하는 경우엔 사용하기 어렵다.
 - 리액트는 그런 제약을 극복할 수 있도록 컨텐이너가 자식을 다룰때 사용할 수 있는 메서드를 제공한다.
 ```text
@@ -75,7 +75,7 @@ export default App;
 | React.Children.toArray | 이 메서드는 자식의 배열을 리턴하는데, 엘리먼트를 재정렬하거나 부분 제거할때 유용하다.
 | React.cloneElement     | 자식 엘리먼트를 복제하며, 새 props 의 추가도 가능하다.
 ```
-a. 컨테이너에 props 추가
+####a. 컨테이너에 props 추가
 - 콤포넌트는 부모로부터 받은 콘텐츠를 직접 조작 할수 없다.
 - __따라서 children prop을 통해 받은 콘텐츠에 데이터나 함수를 추가하려면, React.Children.map 메서드와 React.cloneElement 메서드를 함께 사용해 자식 컴포넌트를 복제하고 추가 props 를 할당해야 한다.__
 - props 는 읽기 전용이기 때문에 단순히 React.Children.forEach 메서드를 사용해 자식 컴포넌트들을 열거하고 그 컴포넌트들의 props 객체에 새 프로퍼티를 할당하는 일은 불가능하다.
@@ -86,7 +86,7 @@ a. 컨테이너에 props 추가
     ```
     - cloneElement 메서드는 자식 컴포넌트와 props 객체를 받는데, 이 props는 자식 컴포넌트의 기존 props에 병합된다.
     
-b. 컴포넌트의 재정렬과 부분 제거
+####b. 컴포넌트의 재정렬과 부분 제거
 - 비록 컨테이너가 자식에 대한 자세한 정보를 모른다 하더라도 toArray 메서드를 사용해 자식을 배열로 변환하면 아이템의 추가,제거,정렬 등 표준 자바스크립트 기능을 사용한 조작이 가능하다.
 - 위와 같은 작업은 React.Children.map 메서드가 리턴하는 배열에 대해서도 가능하다.
 ```jsx
@@ -163,7 +163,7 @@ export function ProFeature(FeatureComponent) {
     ```
     - pro prop 은 HOC 인 proList를 위해서, list prop은 ProList가 감싸고 있는 SortedList 컴포넌트를 위해 정의했다.
     
-4.1. 상태 유지 HOC
+###4.1. 상태 유지 HOC
 - HOC도 상태 유지 컴포넌트가 될수 있으며, 그렇게 함으로써 애플리케이션에 좀 더 복잡한 기능을 추가할 수 있다.
 ```jsx
     import React, {Component} from "react";
@@ -215,7 +215,7 @@ export function ProFeature(FeatureComponent) {
 - 이 컴포넌트는 체크박스를 보여주며, 또한 래핑된 컴포넌트의 가시성을 제거하기 위해 ProFeature HOC 를 사용한다.
 
 
-4.2. HOC의 조합
+###4.2. HOC의 조합
 - __HOC의 유용함 중 하나는 래핑된 컴포넌트 클래스를 생성하는 함수 호출만 변경함으로써 서로 조합할 수 있다는 점이다.__
 ```jsx
     import React from "react";
@@ -247,7 +247,7 @@ export function ProFeature(FeatureComponent) {
 - 이 HOC 함수는 래핑될 컴포넌트와 자바스크립트 콘솔에 메시지를 출력할 label 인자를 받는다.
 
 
-4.3. 렌더링 prop
+###4.3. 렌더링 prop
 - __렌더링 prop 은 렌더링 돼야 할 콘텐츠를 컴포넌트에 제공하는 함수 prop 이며, 이는 한 컴포넌트가 다른 컴포넌트를 래핑하는 또 하나의 방법이다.__
 - 렌더링 prop을 사용하는 컴포넌트도 일반적인 방법으로 정의하면 된다. 단지 다른점은 부모가 제공한 콘텐츠를 보여주기 위해 render라는 이름의 함수 prop을 호출한다는점이다.
     ```jsx
@@ -268,7 +268,7 @@ export function ProFeature(FeatureComponent) {
 - 리액트가 애플리케이션의 콘텐츠를 렌더링할때 ProFeature 컴포넌트의 render 메서드가 호출되며, 그다음에 render prop 함수가 호출돼 새 SortedList 컴포넌트가 생성된다.
 
 
-4.4. 인자 있는 렌더링 prop
+###4.4. 인자 있는 렌더링 prop
 - 렌더링 prop은 보통의 자바스크립트 함수이며, 따라서 인자도 받을 수 있다.
 - 인자를 사용하면 렌더링 prop을 호출하는 컴포넌트가 자신을 래핑하는 콘텐츠에 props를 전달 할수 있다.
 
@@ -314,7 +314,7 @@ export function ProFeature(FeatureComponent) {
     
 - __컨텍스트는 계층도 안의 중간 컴포넌트들을 거치는 prop 스레딩을 할 필요 없이, 상태 데이터를 사용하려는 곳에 직접 전달할 수 있게 한다.__
 
-5.1. 컨텍스트 정의
+###5.1. 컨텍스트 정의
 - 컨텍스트는 애플리케이션의 어느 곳에서든 정의할 수 있다.
  
  ```jsx
@@ -326,7 +326,7 @@ export function ProFeature(FeatureComponent) {
 ```
 - 새 컨텍스트를 만들 때엔 React.createContext 메서드를 사용하며, 컨텍스트의 기본값을 지정하기 위한 데이터 객체를 넣을 수 있다.
 
-5.2. 컨텍스트 소비자
+###5.2. 컨텍스트 소비자
 - 다음 단계는 데이터 값이 필요한 곳에서 컨텍스트를 소비하는, 이른바 컨텍스트 소비자를 만드는 것이다.
 ```jsx
 import React, { Component } from "react";
@@ -366,7 +366,7 @@ export default ActionButton;
 - 컴포넌트는 여전히 컴포넌트의 상태와 prop 데이터에 접근할 수 있으며, 이를 컨텍스트가 제공한 데이터와 함께 자유롭게 혼용할수 있다.
 
 
-5.3. 컨텍스트 제공자
+###5.3. 컨텍스트 제공자
 - 마지막 단계는 컨텍스트에 상태 데이터를 결부시키는 컨텍스트 제공자를 만드는 것이다.
 - 컨텍스트 소비자에게 App 컴포넌트의 모든 상태 데이터를 노출하지 않기 위해 proMode 프로퍼티를 갖는 proContextData 상태 객체를 만들었다.
 ```jsx
@@ -432,7 +432,7 @@ export default App;
 ```
 - App 컴포넌트의 proMode 상태 데이터 프로퍼티를 ActionBution 컴포넌트가 직접 사용함수 있다는 뜻이다. SortedList 컴포넌트를 거치치 않고도 말이다.
 
-5.4. 컨텍스트 데이터 변경
+###5.4. 컨텍스트 데이터 변경
 - 컨텍스트 안의 데이터는 읽기 전용이지만, 함수 prop을 컨텍스트 객체에 포함시켜 상태데이터를 갱신 할수 있다.
 - 컨텍스트 공급업체가 value 프로퍼티를 사용하지 않고 콘텐츠를 적용할때 사용될수 있는 임시 역할의 함수를 추가
     ```jsx
@@ -535,7 +535,7 @@ export default App;
 ```
 - 각 컨텍스트는 자신만의 데이터 객체를 가지며, 리액트는 각 컨텍스트의 제공자와 소비자를 파악할것 이다.
 
-5.5. 컨텍스트 API 사용
+###5.5. 컨텍스트 API 사용
 - 리액트는 렌더링 prop 함수 방식보다 더 쉽게 컨텍스트에 접근 할수 있게 또 다른 수단을 제공한다.
 - 코드
     ```jsx
@@ -560,36 +560,36 @@ export default App;
     - __contextType 이라는 static 프로퍼티에 컨텍스트를 할당함으로써 컴포넌트 전반에서 this.context 로 접근이 가능해 졌다.__
     - __이는 리액트에 비교적 최근에 추가된 기능으로 특히 컴포넌트가 하나의 컨텍스트를 사용할 때 쉽게 사용할수 있다.__
     
-    a. 훅을 사용한 컨텍스트 소비
-    - userContext 훅은 함수형 컴포넌트를 위해 앞 예제의 contextType 프로퍼티에 상응하는 결과를 제공한다.
+####a. 훅을 사용한 컨텍스트 소비
+- userContext 훅은 함수형 컴포넌트를 위해 앞 예제의 contextType 프로퍼티에 상응하는 결과를 제공한다.
     ```jsx
-      import React, {useContext} from 'react';
-      import {ProModeContext} from "./ProModeContext";
-      
-      export function ProModeToggle(props) {
-  
-          const context = useContext(ProModeContext);
-      
-          return (<div className="form-check">
-              <input type="checkbox" className="form-check-input"
-                     value={ context.proMode}
-                     onChange={ (e)=> context.toggleProMode(e,context.proMode) }/>
-              <label className="form-check-label">
-                  { props.label }
-              </label>
-          </div>)
-      
-      }
+    import React, {useContext} from 'react';
+    import {ProModeContext} from "./ProModeContext";
+    
+    export function ProModeToggle(props) {
+    
+      const context = useContext(ProModeContext);
+    
+      return (<div className="form-check">
+          <input type="checkbox" className="form-check-input"
+                 value={ context.proMode}
+                 onChange={ (e)=> context.toggleProMode(e,context.proMode) }/>
+          <label className="form-check-label">
+              { props.label }
+          </label>
+      </div>)
+    
+    }
     ```
     - 보다시피 useContext 훅은 컨텍스트 객체를 리턴하며, 이를 통해 프로퍼티나 함수에 접근할 수 있다.
-    
+
     
 ## 6. 에러 경계
 - __컴포넌트의 렌더링 메서드나 생명주기 메서드에서 에러가 발생하면, 에러는 애플리케이션의 최상부에 도달할때까지 컴포넌트 계층도를 따라 전파하며, 그 시점에서 애플리케이션의 모든 컴포넌트는 언마운트된 상태가 된다.__
 - 이는 어떤 에러든 사실상 애플리케이션을 종료시킬 수 있다는 뜻으로 결코 이상적이지 않다.
 - 에러 메시지는 개발 단계에서만 나타나며, 배포된 애플리케이션에선 나타 나지 않는다.
 
-6.1. 에러 경계 컴포넌트
+###6.1. 에러 경계 컴포넌트
 - __클래스 기반의 컴포넌트는 componentDidCatch 라는 생명주기 메서드를 구현할 수 있는데, 이 메서드는 자식 컴포넌트가 에러를 던지면 호출된다.__
 - __리액트에선 이른바 에러 경계라는 컴포넌트에 에러 처리를 위임 할수 있다.__
 - 이 컴포넌트는 던져진 에러를 가로채 애플리케이션이 계속 진행되게 하거나, 문제의 본딜을 나타내는 메시지를 사용자에게 보여줄수 있다.
