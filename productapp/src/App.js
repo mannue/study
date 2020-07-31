@@ -1,5 +1,4 @@
 import React from "react";
-import {ProductsAndSuppliers} from "./ProductsAndSuppliers";
 import {Provider} from "react-redux";
 import dataStore from "./store";
 import {ProductDisplay} from "./ProductDisplay";

@@ -1,72 +1,49 @@
-import React, {Component} from 'react';
-import {SupplierEditor} from "./SupplierEditor";
-import {SupplierTable} from "./SupplierTable";
-import {saveSuppliers, deleteSupplier} from "./store";
-import {connect} from "react-redux";
+import React, { Component } from "react";
+import { SupplierEditor } from "./SupplierEditor";
+import { SupplierTable } from "./SupplierTable";
+import { connect } from "react-redux";
+import { EditorConnector } from "./store/EditorConnector";
+import { SUPPLIERS } from "./store/dataTypes";
+import { TableConnector } from "./store/TableConnector";
+import { startCreatingSupplier } from "./store/stateActions";
+
+const ConnectedEditor = EditorConnector(SUPPLIERS, SupplierEditor);
+const ConnectedTable = TableConnector(SUPPLIERS, SupplierTable);
 
 const mapStateToProps = (storeData) => ({
-    suppliers: storeData.suppliers
-})
+  editing: storeData.stateData.editing,
+  selected:
+    storeData.modelData.suppliers.find(
+      (item) => item.id === storeData.stateData.selectedId
+    ) || {},
+});
 
 const mapDispatchToProps = {
-    saveCallback: saveSuppliers,
-    deleteCallback: deleteSupplier
-}
+  createSupplier: startCreatingSupplier,
+};
 
-const connectFunction = connect(mapStateToProps, mapDispatchToProps)
+const connectFunction = connect(mapStateToProps, mapDispatchToProps);
 
 export const SupplierDisplay = connectFunction(
-class extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            showEditor: false,
-            selected: null,
-        }
-    }
-
-    cancelEditing = (ev) => {
-        this.setState({
-            showEditor: false,
-            selected: null,
-        });
-    };
-
-    createSupplier = (ev) => {
-        this.setState({
-            showEditor: true,
-            selected: {},
-        })
-    }
-
-    saveSupplier = (supplier) => {
-        this.props.saveCallback(supplier);
-        this.setState({
-            showEditor: false,
-            selected: null
-        })
-    }
-
-    startEditing = (supplier) => {
-        this.setState({
-            showEditor: true,
-            selected: supplier
-        })
-    }
-
+  class extends Component {
     render() {
-       if (this.state.showEditor) {
-           return <SupplierEditor key={ this.state.selected.id || -1 } supplier={this.state.selected} saveCallback={this.saveSupplier} cancelCallback={this.cancelEditing}/>
-       } else {
-           return <div className="m-2">
-               <SupplierTable suppliers={this.props.suppliers} editCallback={this.startEditing} deleteCallback={this.props.deleteCallback }/>
-               <div className="text-center">
-                   <button className="btn btn-primary m-1" onClick={ this.createSupplier }>
-                       Create Supplier
-                   </button>
-               </div>
-           </div>
-       }
+      if (this.props.editing) {
+        return <ConnectedEditor key={this.props.selected.id || -1} />;
+      } else {
+        return (
+          <div className="m-2">
+            <ConnectedTable />
+            <div className="text-center">
+              <button
+                className="btn btn-primary m-1"
+                onClick={this.props.createSupplier}
+              >
+                Create Supplier
+              </button>
+            </div>
+          </div>
+        );
+      }
     }
-})
+  }
+);

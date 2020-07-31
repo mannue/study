@@ -17,6 +17,6 @@ export default function (storeData, action) {
                 editing: false
             }
         default:
-            return storeData || initialData.stateDate
+            return storeData || initialData.stateData
     }
 }

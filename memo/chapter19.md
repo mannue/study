@@ -360,9 +360,69 @@ _ 처음 할일은 데이터 스토어 전반에 존재하는 데이터의 각�
 ```
 - 상태 데이터를 위한 리듀서는 사용자가 편집하거나 생성하는 대상을 추적하는데 이는 기존의 컴포넌트에서 했던 접근법과 같다.
 
-### 3.4 스토어에 상태 데인터 기능 통합
+### 3.4 스토어에 상태 데이터 기능 통합
 - __리덕스는 데이터 스토어의 각 섹션을 담당하는 리듀서들을 조합해 사용할 수 있게 하는 combineReducers 라는 함수를 제공한다.__
+```jsx
+    import {combineReducers, createStore} from "redux";
+    import modelReducer from "./modelReducer";
+    import stateReducer from "./stateReducer";
+    
+    export default createStore(combineReducers(
+        {
+            modelData: modelReducer,
+            stateDate: stateReducer
+        }
+    ));
+    
+    export { saveProduct, saveSuppliers, deleteProduct, deleteSupplier } from "./modelActionCreators"
+```
+- combineReducers 함수의 인자는 데이터 스토어의 각 섹션의 이름과 각 데이터를 관리하는 리듀서를 프로퍼티로 갖는 하나의 객체다.
+- 여기선 데이터 스토어의 modelData 섹션을 책임지는 원래의 리듀서, stateData 섹션을 책임지기 위해 정의했던 리듀서를 사용했다.
+- 조합된 리듀서는 데이터 스토어를 생성하기 위한 createStore 함수로 전달된다.
 
+```text
+Tip
+각 리듀서는 데이터 스토어의 서로 분리된 부분을 담당하지만, 새 데이터 스토어 객체가 리턴될 때 까지 각 리듀서에게 액션이 전달된다.
+즉 새 데이터 스토어 객체가 리턴된다는 것은 모든 액션이 처리됐음을 의미한다.
+``` 
+
+### 3.5 컴포넌트와 상태 데이터 연결
+- 각 컴포넌트를 수정하기 보다는 별도의 커넥터 컴포넌트를 정의해 데이터 스토어의 기능과 컴포넌트 props 를 매핑하게 할것 이다.
+```text
+프리젠터 패턴 과 커넥터 패턴
+데이터 스토어를 사용할 때의 일반적인 접근법은 두 개의 컴포넌트 유형을 사용하는 것이다.
+프리젠터 컴포넌트는 콘텐츠를 렌더링하고 사용자의 입력에 응답하는 책임을 진다. 
+프리젠터는 데이터 스토어에 직접 연결되지 않은 데이터와 함수 props 를 받는다.
+커넥터 컴포넌트는 혼란스럽겠지만 바로 컨테이너 컴포넌트를 말하며, 데이터 스토어에 연결하고 프리젠터 컴포넌트에 props를 제공한다.
+```
+```jsx
+import React, {Component} from 'react';
+import { connect } from "react-redux";
+import { endEditing } from "./stateActions"
+import { saveProduct, saveSuppliers } from "./modelActionCreators";
+import { PRODUCTS, SUPPLIERS } from "./dataTypes";
+
+export const EditorConnector = (dataType, presentationComponent) => {
+    const mapStateToProps = (storeData) => ({
+        editing: storeData.stateData.editing && storeData.stateData.selectedType === dataType,
+        product: (storeData.modelData[PRODUCTS].find(p => p.id === storeData.stateDate.selectedId)) || {},
+        supplier: (storeData.modelData[SUPPLIERS].find(s => s.id === storeData.stateDate.selectedId)) || {}
+    })
+
+    const mapDispatchToProps = {
+        cancelCallback: endEditing,
+        saveCallback: dataType === PRODUCTS ? saveProduct: saveSuppliers
+    }
+    return connect(mapStateToProps,mapDispatchToProps)(presentationComponent)
+}
+```
+- EditorConnector 는 ProductEditor 와 SupplierEditor 컴포넌트에 필요한 프리젠터 컴포넌트를 prop 와 함께 제공하는 HOC 다.
+- __이는 이들 컴포넌트 각자가 connect 함수를 사용할 필요 없이, 동일한 코드를 사용해 데이터 스토어에 연결 할 수 있다는 뜻이다.__
+- 두종류 모두를 지원하기 위해 HOC 함수는 데이터를 선택할 때 사용되는 데이터 타입과 props 에 매핑될 액션 생성자를 받는다.
+
+```text
+
+```
  
 
     

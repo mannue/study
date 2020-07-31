@@ -19,6 +19,6 @@ export default function (storeData, action) {
                 [action.dataType]: storeData[action.dataType].filter(p=> p.id !== action.payload.id)
             }
         default:
-            return storeData || initialData.modelData
+            return storeData || initialData.modelData;
     }
 }

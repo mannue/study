@@ -16,7 +16,7 @@ export const startEditingSupplier = (supplier) => ({
     payload: supplier
 });
 
-export const endEditingProduct = () => ({
+export const endEditing= () => ({
     type: STATE_END_EDITING
 })
 

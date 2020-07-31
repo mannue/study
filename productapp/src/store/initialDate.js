@@ -12,7 +12,7 @@ export const initialData = {
             {id:2 , name: "Cosy Gear", city: "New York", products: [2, 3]}
         ],
     },
-    stateDate: {
+    stateData: {
         editing: false,
         selectedId: -1,
         selectedType: PRODUCTS
