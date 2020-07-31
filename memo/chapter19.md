@@ -157,6 +157,213 @@ _ 처음 할일은 데이터 스토어 전반에 존재하는 데이터의 각�
         -__스토어 안의 데이터는 리듀서가 만든 객체로 대체되므로 액션에 의해 변경된 프로퍼티뿐만 아니라 다른 기존 프로퍼티도 복사해야 된다__
 
 - 만약 리듀서 함수가 undefined 를 리턴하면 리덕스는 에러를 발생시킬 것이다.
+
+### 1.6 데이터 스토어 생성 
+- __리덕스는 데이터 스토어를 생성하고 사용될 준비를 해주는 createStore 라는 함수를 제공한다.__
+```text
+<Tip>
+파일 이름을 반드시 index.js 로 할 필요는 없다. 그러나 이렇게 하면 파일 이름 없이 폴더 이름만으로 
+데이터 스토어를 가져 올수 있다는 장점이 있다. 
+```
+- 코드
+    ```jsx
+      import { createStore } from "redux";
+      import modelReducer from "./modelReducer";
+      
+      export default createStore(modelReducer);
+      
+      export { saveProduct, saveSuppliers, deleteProduct, deleteSupplier } from "./modelActionCreators"
+    ```
+    - index.js 파일에서 기본 내보내기를 사용하면 리듀서 함수를 인자로 받는 createStore 를 호출하는 결과가 된다.
+    - 또한 액션 생성자들도 내보내기를 함으로써 하나의 import 구문으로도 애플리케이션의 어디에서든 데이터 스토어의 기능에 접근할 수 있게 했다.
+
+     
+## 2. 데이터 스토어 사용
+- 아직은 앞선 만든 액션, 액션 생성자, 리듀서를 애플리케이션에 통합하지 않았으며, 애플리케이션 컴포넌트와 데이터 스토어 사이의 어떤 연결도 없는 상태다.
+
+### 2.1 최상위 컴포넌트에 데이터 스토어 적용
+- 리액트 리덕스 패키지엔 데이터 스토어에 접근하게 하는 리액트 컨테이너 컴포넌트가 포함돼 있다.
+- __Provider 라고 하는 이 컴포넌트를 컴포넌트 계층도의 최상위에 적용하면 애플리케이션 전체에서 데이터 스토어를 사용할 수 있게 된다.__
+- 코드
+    ```jsx
+      import React from "react";
+      import {ProductsAndSuppliers} from "./ProductsAndSuppliers";
+      import {Provider} from "react-redux";
+      import dataStore from "./store";
+      
+      function App() {
+        return(
+            <Provider store={dataStore}>
+              <ProductsAndSuppliers />    
+            </Provider>
+        )
+      }
+      
+      export default App;
+    ```
+    - Provider 컴포넌트엔 데이터 스토어를 지정하는 store 라는 prop 이 있으며, 여기에 import 구문에서 명명한 dataStore 를 할당했다.
+
+### 2.2 상품 데이터 연결
+- 다음 단계는 데이터를 필요로 하는 컴포넌트에 데이터 스토어 그리고 그에 대한 작업하는 액션 생성자를 연결하는 것이다.
+- 우선 데이터 스토어를 받고 컴포넌트와 스토어를 연결해줄 props 를 선택하는 함수를 정의했다.
+    ```jsx
+     const mapStateToProps = (storeData) => ({
+       products: storeData.products
+     })
+    ```
+    - mapStateToProps 라는 관례적인 이름의 이 함수는 컴포넌트의 prop 이름과 스토어의 데이터를 매핑하는 객체 하나를 리턴한다.
+    - __이와 같은 매핑 함수를 셀렉터(selector) 라고 한다.__
+    - 컴포넌트 prop 에 매핑될 데이터를 선택 하기 때문에 붙여진 이름이다.
+    - 이 코드에선 셀렉터가 스토어의 products 배열을 컴포넌트의 product prop 에 매핑하고 있다.
+
+- 컴포넌트에 필요한 함수 prop 을 데이터 스토어의 액션 생성자에 매핑했다.
+    ```jsx
+    const mapDispatchToProps = {
+      saveCallback: saveProduct,
+      deleteCallback: deleteProduct,
+    }
+    ```
+    - 리액트 리덕스 패키지는 액션 생성자를 함수 prop 에 연결하는 여러 방법을 지원한다.
+    - 컴포넌트가 데이터 스토어에 연결되면 리듀서가 자동으로 호출될 수 있도록 액션 생성자도 연결된다.
+    - 이 코드에선 saveProduct 와 deleteProduct 액션 생성자를 saveCallback 과 deleteCallback 이라는 이름의 함수를 prop 에 매핑했다.
+
+- 일단 데이터와 함수 prop 을 위한 매핑이 정의되면, 그 다음엔 리액트 리덕스 패키지가 제공하는 connect 함수에 전달된다.
+    ```jsx
+    const connectFunction = connect(mapStateToProps, mapDispatchToProps);
+    ```
+    - __connect 함수는 부모 컴포넌트가 제공한 props 가 병합된 데이터 스토어에 연결된 props 를 전달하는 HOC 를 생성한다.__
+
+- 마지막 으로 connect 가 리턴한 함수에 컴포넌트를 전달했다.
+    ```text
+    export const ProductDisplay = connectFunction{
+    ```
+- 데이터 스토어가 제공하는 props 가 부모 컴포넌트로 부터의 props 를 대체했으므로, ProductDisplay 컴포넌트는 상품 생성, 편집, 삭제 등의 모든 작업을 데이터 스토어의 데이터에 하게 됐다.
+
+### 2.3 공급업체 데이터 연결
+- 데이터 스토어를 사용하면서 상품 데이터와 공급업체 데이터를 제공하고 관리하던 ProductAndSuppliers 컴포넌트는 불필요해졌다.
+```jsx
+    import React from "react";
+    import {ProductsAndSuppliers} from "./ProductsAndSuppliers";
+    import {Provider} from "react-redux";
+    import dataStore from "./store";
+    import {ProductDisplay} from "./ProductDisplay";
+    import {Selector} from "./Selector";
+    import {SupplierDisplay} from "./SupplierDisplay";
+    
+    function App() {
+      return(
+          <Provider store={dataStore}>
+              <Selector>
+                  <ProductDisplay name="Products"/>
+                  <SupplierDisplay name="Suppliers"/>
+              </Selector>
+          </Provider>
+      )
+    }
+    
+    export default App;
+```
+- 여기선 ProductDisplay 와 SupplierDisplay 컴포넌트가 데이터와 메서드에 접근할 수 있게 했던 props 를 제공하지 않았다는 점에 주목하기 바란다.
+- 이는 컴포넌트를 데이터 스토어에 연결하는 connect 메서드가 담당하기 때문이다.
+
+
+## 3. 데이터 스토어 확장
+- 데이터 스토어는 사용자에게 보여주는 데이터만을 위한 것이 아니다.
+- 데이터 스토어는 컴포넌트들을 조합하고 관리할 때 사용되는 상태 데이터도 저장 할수 있다.
+- 상태 데이터를 포함하게 데이터 스토어를 확장하면 컴포넌트가 상태 데이터에 직접 연결 할 수 있게 된다.
+
+### 3.1 스토어에 상태 데이터 추가
+- 우리의 목적은 ProductDisplay 와 SupplierDisplay 컴포넌트 안의 상태 데이터와 로직을 데이터 스토어로 옮기는 것이다.
+```jsx
+    import { PRODUCTS, SUPPLIERS } from "./dataTypes";
+    
+    export const initialData = {
+        modelData: {
+            [PRODUCTS]: [
+                {id: 1, name: "Trail Shoes", category: "Running", price: 100},
+                {id: 2, name: "Thermal Hat", category: "Running", price: 12},
+                {id: 3, name: "Heated Gloves", category: "Running", price: 82.50}
+            ] ,
+            [SUPPLIERS]: [
+                {id:1 , name: "Zoom Shoes", city: "London", products: [1]},
+                {id:2 , name: "Cosy Gear", city: "New York", products: [2, 3]}
+            ],
+        },
+        stateDate: {
+            editing: false,
+            selectedId: -1,
+            selectedType: PRODUCTS
+        }
+    }
+```
+
+### 3.2 액션 타입과 액션 생성자 정의 
+```jsx
+    import {PRODUCTS, SUPPLIERS} from "./dataTypes";
+    
+    export const  STATE_START_EDITING   = "state_start_editing";
+    export const  STATE_END_EDITING     = "state_end_editing";
+    export const  STATE_START_CREATING  = "state_start_creating";
+    
+    export const startEditingProduct = (product) => ({
+        type: STATE_START_EDITING,
+        dateType: PRODUCTS,
+        payload: product
+    });
+    
+    export const startEditingSupplier = (supplier) => ({
+        type: STATE_START_EDITING,
+        dateType: SUPPLIERS,
+        payload: supplier
+    });
+    
+    export const endEditingProduct = () => ({
+        type: STATE_END_EDITING
+    })
+    
+    export const startCreatingProduct = () => ({
+        type: STATE_START_CREATING,
+        dateType: PRODUCTS
+    })
+    
+    export const startCreatingSupplier = () => ({
+        type: STATE_START_CREATING,
+        dateType: SUPPLIERS
+    })
+```
+- 이 액션 생성자들은 ProductDisplay 와 SupplierDisplay 컴포넌트가 정의했던 메서드들에 대응하며, 사용자가 객체를 편집, 취소, 생성 할 수 있게 한다.
+
+### 3.3 리듀서 정의 
+```jsx
+    import {STATE_END_EDITING, STATE_START_CREATING, STATE_START_EDITING} from "./stateActions";
+    import {initialData} from "./initialDate";
+    
+    export default function (storeData, action) {
+        switch (action.type) {
+            case STATE_START_EDITING:
+            case STATE_START_CREATING:
+                return {
+                    ...storeData,
+                    editing: true,
+                    selectedId: action.type === STATE_START_EDITING ? action.payload.id : -1,
+                    selectedType: action.dataType
+                }
+            case STATE_END_EDITING:
+                return {
+                    ...storeData,
+                    editing: false
+                }
+            default:
+                return storeData || initialData.stateDate
+        }
+    }
+```
+- 상태 데이터를 위한 리듀서는 사용자가 편집하거나 생성하는 대상을 추적하는데 이는 기존의 컴포넌트에서 했던 접근법과 같다.
+
+### 3.4 스토어에 상태 데인터 기능 통합
+- __리덕스는 데이터 스토어의 각 섹션을 담당하는 리듀서들을 조합해 사용할 수 있게 하는 combineReducers 라는 함수를 제공한다.__
+
  
-        
+
+    
     
