@@ -420,10 +420,68 @@ export const EditorConnector = (dataType, presentationComponent) => {
 - __이는 이들 컴포넌트 각자가 connect 함수를 사용할 필요 없이, 동일한 코드를 사용해 데이터 스토어에 연결 할 수 있다는 뜻이다.__
 - 두종류 모두를 지원하기 위해 HOC 함수는 데이터를 선택할 때 사용되는 데이터 타입과 props 에 매핑될 액션 생성자를 받는다.
 
+## 4. 복수의 액션 디스패치
+- 문제점 객체를 생성하거나 기존 객체를 편집할 때 Save 버튼을 클릭하면 데이터 스토어는 갱신되지만 사용자가 보고 있는 컴포넌트는 바뀌지 않는다 는 점이다.
+- __문제는 액션생성자 와 props 를 매핑하는 connect 함수가 기본적으로 하나의 액션 생성자만 허용한다는 점이다.__
+- 두 작업을 모두 수행하는 새로운 하나의 액션 생성자를 정의 할수 도 없다.
+- 각 액션은 각 하나의 리듀서가 처리하며, 각 리듀서는 스토어 안에 분리돼 있는 부분을 각자 담당하기 때문이다.
+- __connect 함수는 props 를 액션 생성자에 매핑하는 또 다른 유연한 방법을 제공한다.__
+- __connect 함수의 mapDispatchToProps 인자가 객체일 경우, connect 함수는 각 액션 생성 자를 dispatch 메서드로 래핑한다.__
+- __dispatch 메서드는 액션 생성자가 리턴한 액션을 리듀서로 전달하는 역할을 한다.__
+- 변경 전
+    ```jsx
+      const mapDispatchToProps = {
+        createSupplier: startCreatingSupplier,
+      };
+    ```
+- 변경 후
+    ```jsx
+      const mapDispatchToProps = {
+        createSupplier: payload => dispatch(startCreatingSupplier(payload)),
+      };
+    ```
+- 액션 생성자가 호출돼 얻어진 객체는 dispatch 함수로 전달돼 리듀서에 의해 처리된다.
+
+- 코드
+```jsx
+    const mapDispatchToProps = dispatch => ({
+        cancelCallback: () => dispatch(endEditing()),
+        saveCallback: (data) => {
+            dispatch((dataType === PRODUCTS ? saveProduct : saveSuppliers)(data));
+            dispatch(endEditing())
+        }
+    });
+``` 
+- 액션을 디스패치하는 함수엔 매핑된 각각의 prop 을 위한 값이 필요하며, 단순히 액션 생성자를 호출하거나 svaCallback prop 처럼 복수의 액션을 생성하고 디스패치 하도록 구현할 수 있다.
+
+## 5.참조의 필요성
+- 사용자가 선택한 객체를 추적하기 위해선 다음과 같은 ID 와 데이터 타입의 조합을 사용했다.
 ```text
+    stateData: {
+        editing: false,
+        selectedId: -1,
+        selectedType: PRODUCTS
+    }
 
+    const mapStateToProps = (storeData) => ({
+        editing: storeData.stateData.editing && storeData.stateData.selectedType === dataType,
+        product: (storeData.modelData[PRODUCTS].find(p => p.id === storeData.stateData.selectedId)) || {},
+        supplier: (storeData.modelData[SUPPLIERS].find(s => s.id === storeData.stateData.selectedId)) || {}
+    })
 ```
- 
+- 이와 같이 우외적으로 보이는 방법을 사용하는 이유는 데이터 스토어가 애플리케이션의 중요한 데이터의 원천이며, 데이터를 컴포넌트에 연결하는 셀렉터 에 의해 변경될 위험을 없애기 위해서다.
 
-    
+```text
+  const mapSateToProps = (storeData) => ({
+        products: storeData.modelData[PRODUCTS],
+        suppliers: storeData.modelData[SUPPLIERS].map(supp => ({
+            ...supp,
+            products: supp.products.map(id => storeData.modelData[PRODUCTS].find(p => p.id === Number(id)) || id).map(val => val.name || val)
+        }))
+    })
+```
+- 이 새로운 셀렉터는 각 공급업체 객체의 products 프로퍼티를 해당 상품의 id가 아닌 이름으로 대체하기 위해 공급업체 데이터와 상품 데이터를 일치시킨다.
+- 셀렉터에서의 데이터 변형은 데이터의 동일한 뷰가 필요할 때마다 일관성을 보장한다. 그러나 이는 컴포넌트가 더 이상 데이터 스토어의 원래 데이터로 작업하지 못한다는 뜻이다.
+- 결과적으로 다른 컴포넌트의 행동을 유발하기 위해 받은 데이터에 의존하는 일은 문제를 일으킬 수 있으며, 그런 이유로 사용자가 편집을 위해 선택한 객체를 추적하기 위해 ID 값을 사용 했던 것이다.
+   
     
