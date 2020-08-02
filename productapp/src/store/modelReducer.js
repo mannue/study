@@ -16,7 +16,7 @@ export default function (storeData, action) {
         case DELETE:
             return {
                 ...storeData,
-                [action.dataType]: storeData[action.dataType].filter(p=> p.id !== action.payload.id)
+                [action.dataType]: storeData[action.dataType].filter(p=> p.id !== action.payload)
             }
         default:
             return storeData || initialData.modelData;
