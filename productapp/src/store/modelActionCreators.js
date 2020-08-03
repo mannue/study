@@ -7,7 +7,7 @@ export const saveProduct = (product) => {
     return createSaveEvent(PRODUCTS, product)
 }
 
-export const saveSuppliers = (supplier) => {
+export const saveSupplier = (supplier) => {
     return createSaveEvent(SUPPLIERS, supplier)
 }
 

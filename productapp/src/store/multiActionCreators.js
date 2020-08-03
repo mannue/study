@@ -1,5 +1,7 @@
 import {PRODUCTS} from "./dataTypes";
-import {saveProduct, saveSuppliers} from "./modelActionCreators";
+import {saveProduct, saveSupplier} from "./modelActionCreators";
 import {endEditing} from "./stateActions";
 
-export const saveAndEndEditing = (data, dataType) => [ dataType === PRODUCTS ? saveProduct(data) : saveSuppliers(data), endEditing()]
+export const saveAndEndEditing = (data, dataType) => {
+    return [dataType === PRODUCTS ? saveProduct(data) : saveSupplier(data), endEditing()];
+}

@@ -16,5 +16,5 @@ const enhancedReducer = customReducerEnhancer(
 
 export default createStore(enhancedReducer, compose(applyMiddleware(multiActions), asyncEnhancer(2)));
 
-export { saveProduct, saveSuppliers, deleteProduct, deleteSupplier } from "./modelActionCreators"
+export { saveProduct, saveSupplier, deleteProduct, deleteSupplier } from "./modelActionCreators"
 

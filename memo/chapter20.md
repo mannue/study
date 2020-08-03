@@ -323,3 +323,61 @@ export function asyncEnhancer(delay) {
 - 표준 createStore 함수는 오직 하나의 개선자 함수만 받을 수 있는데, 우리는 이미 applyMiddleware 개선자를 사용하고 있다.
 - 리듀서 함수는 조합이 가능하므로 하나의 개선자의 결과를 다른 리듀서로 전달할 수 있다. 리덕스는 함수의 조합을 쉽게 처리해주는 compose 라는 함수를 제공한다.
 
+
+## 5. 리액트 리덕스 API
+### 5.1 고급 연결 기능
+- connect 함수는 대개 두 개의 인자를 사용하는데, 하나는 데이터 props 를 선택하며 다른 하나는 함수 props 를 선택한다.
+```text
+return connect(mapStateToProps, mapDispatchToPros)(presentationComponent)
+```
+- 그런데 사실 connect 함수는 고급 기능을 지원하기 위해 추가 인자를 허용하며, 또 다른 방식으로 표현된 인자를 사용할 수 있다.
+#### a. 데이터 props 매핑
+- connect 함수의 첫번째 인자는 컴포넌트의 데이터 props 를 위해 스토어로부터 데이터를 선택하는 함수다.
+- 대개 셀렉터는 함수로 정의되는데, 이 함수는 스토어의 getState 메서드로부터 값을 받으며 prop 이름에 해당하는 프로퍼티를 갖는 객체를 리턴한다.
+- 셀렉터 함수는 데이터 스토어에 변경이 있을 때 호출되며, connect 함수가 만든 HOC는 shouldComponentUpdate 생명주기 메서드를 사용해 커넥트 컴포넌트의 갱신에 변경된 값이 필요한지 여부를 확인한다.
+- 셀렉터 함수를 커넥터 컴포넌트를 위해 부모가 제공한 props 를 받기 위한 두 번째 인자로 사용할 수도 있다.
+```jsx
+    const mapSateToProps = (storeData, ownProps) => {
+        if(!ownProps.needSuppliers) {
+            return { products: storeData.modelData[PRODUCTS] };
+        } else {
+            return {
+                suppliers: storeData.modelData[SUPPLIERS].map(supp => ({
+                    ...supp,
+                    products: supp.products.map(id => storeData.modelData[PRODUCTS].find(p => p.id === Number(id)) || id).map(val => val.name || val)
+                }))
+            }
+        }
+    }
+```
+
+#### b. 함수 props 매핑
+- connect 함수의 두 번째 인자는 함수 props 를 매핑하는 객체나 함수다.
+- __객체인 경우엔 객체의 각 프로퍼티 값들이 액션 생성자 함수로 간주돼 자동으로 dispatch 메서드에 래핑되며 함수 prop 에 매핑된다.__
+- __함수인 경우엔 그 함수는 dispatch 메서드에 전달돼 함수 prop 매핑에 사용된다.__
+```text
+Tip
+connect 함수의 두 번째 인자를 생략할 수 도 있다. 이 경우 dispatch 메서드가 dispatch 라는 이름의 prop 에 매핑되며
+컴포넌트가 직접 액셔니을 만들어 디스패치 할 수 있게 한다.
+```
+- 함수를 지정하는 경우엔 커넥터 컴포넌트의 props 를 받을지도 선택 할수 있다. 이는 컴포넌트가 부모로부터 데이터 스토어의 매핑됨 함수 props 의 집합에 대한 지시를 받을수 있게 한다.
+```jsx
+     const mapDispatchToProps = (dispatch, ownProps) => {
+            console.log(ownProps)
+            if (!ownProps.needSuppliers) {
+                return {
+                    editCallback: (...args) => dispatch(startEditingProduct(...args)),
+                    deleteCallback: (...args) => dispatch(deleteProduct(...args))
+                }
+            } else {
+                return {
+                    editCallback: (...args) => dispatch(startEditingSupplier(...args)),
+                    deleteCallback: (...args) => dispatch(deleteSupplier(...args)),
+                }
+            }
+        }
+```
+#### c. props 병합
+
+
+
