@@ -294,4 +294,32 @@ export const saveAndEndEditing = (data, dataType) => [ dataType === PRODUCTS ? s
 - 액션의 배열은 미들웨어에 전달돼 순서대로 디스패치될 것이다.
 
 
+## 4. 데이터 스토어 개선
+- 미들웨어가 더 충분한 유연성을 제공하지 않는다고 판단된다면 또 다른 방법으로는 개선자 함수 이다.
+- 개선자 함수는 __데이터 스토어 객체를 생성하는 책임을 지며 표준 메서드의 래퍼나 새 메서드를 제공하는 함수다.__
+- applyMiddleware 함수가 바로 개선자 함수의 예이며, 이 함수는 데이터 스토어의 dispatch 메서드를 대체해, 리듀서로 전달되기 전에 액션을 미들웨어 사슬에 유통시킨다.
+```jsx
+export function asyncEnhancer(delay) {
+    return function (createStoreFunction) {
+        return function (...args) {
+            const store = createStoreFunction(...args);
+            return {
+                ...store,
+                dispatchAsync: (action) => new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        store.dispatch(action);
+                        resolve();
+                    },delay);
+                })
+            }
+        }
+    }
+}
+```
+- 바깥에서 두번째 함수는 개선자가 데이터 스토어에 적용될때 호출되며, 개선자의 동작을 설정할 인자를 받을 기회를 제공한다.
+- 데이터 스토어가 생성되면 리덕스는 개선자가 제공한 함수를 호출하며, 그 결과를 데이터 스토어 객체로 사용한다.
+
+### 4.1 개선자 적용
+- 표준 createStore 함수는 오직 하나의 개선자 함수만 받을 수 있는데, 우리는 이미 applyMiddleware 개선자를 사용하고 있다.
+- 리듀서 함수는 조합이 가능하므로 하나의 개선자의 결과를 다른 리듀서로 전달할 수 있다. 리덕스는 함수의 조합을 쉽게 처리해주는 compose 라는 함수를 제공한다.
 
