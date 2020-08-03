@@ -378,6 +378,30 @@ connect 함수의 두 번째 인자를 생략할 수 도 있다. 이 경우 disp
         }
 ```
 #### c. props 병합
+- connect 함수는 프레젠테이션 컴포넌트에 전달되기 전의 props 를 조합하기 위해 사용할수 있는 세번째 인자를 받을수 있다.
+- __mergeProps 라고 하는 이 인자는 데이터 props, 함수 props, 컴포넌트 props 를 받으며, 이들을 조합한 하나의 객체를 리턴한다.__
+- 리턴된 객체는 프레젠테이션 컴포넌트를 위한 props 로서 사용된다.
+```jsx
+const mergeProps = (dataProps, functionProps, ownProps) => ({
+        ...dataProps, ...functionProps, ...ownProps
+    })
 
+return connect(mapStateToProps,mapDispatchToProps,mergeProps)(presentationComponent)
+```
+- 여기서 mergeProps 함수는 각 prop 객체로부터의 프로퍼티들을 조합한다.
+- 프로퍼티들은 정해진 수선대로 객체로부터 복사되는데, 이는 ownProps 를 마지막에 복사한다는 뜻이며, 동일한 이름의 props 가 존재 할 때 부모로부터 받은 props 가 사용될 것이라는 뜻이다.
+
+#### d. 연결 옵션 설정
+- connect 함수의 마지막 인자는 관례적으로 option 라는 이름을 갖는 데이터 스토어의 연결을 설정할 때 사용되는 객체다.
+```text
+|       프로퍼티         |  설명
+|       pur             | 기본적으로 커넥터 컴포넌트는 오직 자신의 props 가 변경되거나 데이터 스토어 로부터 선택된 값들 중 하나가 변결될 때 갱신된다.
+|                       | 이는 connect 함수가 만드는 HOC 가 prop 나 데이터의 변경이 없다면 컴포넌트가 갱신 되지 않게 한다.
+|                       | 이 프로퍼티를 false 로 설정하면 커넥터 컴포넌트는 다른 데이터에도 의존하게되며, HOC 는 갱신을 방지하려는 시도를 하지 않는다. 기본값은 true 다.
+|  areStatePropsEqual   | pure 프로퍼티가 true 일때 갱신 작업의 최소화를 위해 mapStateToProps 값의 기본 등치 비교를 대체하는 함수다.
+|  areOwnPropsEqual     | pure 프로퍼티가 true 일때 갱신 작업의 최소화를 위해 mapDispatchToProps 값의 기본 등치 비교를 대체하는 함수다. 
+|  areMergedPropsEqual  | pure 프로퍼티가 true 일때 갱신 작업의 최소화를 위해 mergeProps 값의 기본 등치 비교를 대체하는 함수다.
+|  areStateEqual        | pure 프로퍼티가 true 일때 갱신 작업의 최소화를 위해 전체 컴포넌트의 기본 등치 비교를 대체하는 함수다.
+``` 
 
 

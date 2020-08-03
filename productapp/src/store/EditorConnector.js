@@ -18,5 +18,9 @@ export const EditorConnector = (dataType, presentationComponent) => {
              //dispatch(endEditing())
     }
 
-    return connect(mapStateToProps,mapDispatchToProps)(presentationComponent)
+    const mergeProps = (dataProps, functionProps, ownProps) => ({
+        ...dataProps, ...functionProps, ...ownProps
+    })
+
+    return connect(mapStateToProps,mapDispatchToProps,mergeProps)(presentationComponent)
 }
