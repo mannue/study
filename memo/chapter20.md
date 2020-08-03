@@ -215,3 +215,83 @@ export default createStore(combineReducers(
 - __combineReducers 함수는 리덕스가 제공하는 리듀서 개선자다.__
 - 리듀서 개선자는 처리되기 전의 액션을 받기 때문에 유용하다. __이는 리듀서 개선자가 액션을 변경하거나 거부 , 또는 특별한 방법으로 처리할 수 있다는 뜻이다.__
 - combineReducers 함수는 복수의 리듀서를 사용할 수 있게 액션을 처리한다.
+
+```jsx
+    import { initialData } from "./initialData"
+    
+    export const STORE_RESET = "store_clear";
+    
+    export const resetStore = () => ({ type: STORE_RESET })
+    
+    export function CustomReducerEnhancer(originalReducer)  {
+        let initialState = null;
+    
+        return (storeData, action) => {
+            if (action.type === STORE_RESET && initialData != null) {
+                return initialState;
+            } else {
+                const result = originalReducer(storeData, action);
+                if (initialState == null) {
+                    initialState = result
+                }
+                return result
+            }
+        }
+    }
+```
+- CustomReducerEnhancer 함수는 하나의 리듀서를 인자로 받으며, 데이터 스토어가 사용할 수 있는 새 리듀서 함수를 리턴한다.
+- 개선자 함수는 리듀서에 전달된 첫 번째 액션을 통해 획득한 데이터 스토어의 초기 상태를 기록한다.
+- 새 액션 타입인 STORE_RESET 은 개선자 함수가 데이터 스토어의 초기 상태를 리턴해 데이터 스토어를 초기화 하게 한다.
+
+
+## 3. 데이터 스토어 미들웨어 
+- 리덕스는 데이터 스토어 미들웨어 를 지원한다. __미들웨어는 dispatch 메서드와 리듀서의 사이에서 액션을 받음으로써 액션을 가로채 변형하거나 다른 어떤 방식으로 처리하는 함수다.__
+- __미들웨어를 사용하는 가장 흔한 경우는 액션에 비동기 작업을 추가하거나 액션을 함수에 래핑하여 조건적으로 디스패치되게 하는 경우다.__
+
+```text
+커스텀 코드를 작성하는 대신 반드시 고려해야 할, 일반적인 프로젝트의 요구사항을 충족시키는 여러 미들웨어 패키지들이 있다.
+redux-promise 패키지는 비동기 작업을 지원하며, Redux Thunk 패키지는 함수를 리턴하는 액션 생성자를 지원한다.
+```
+```jsx
+    import React, { Component } from "react";
+    
+    export function multiActions({ dispatch, getState }) {
+        return function receiveNext(next) {
+            return function processAction(action) {
+                if (Array.isArray(action)) {
+                    action.forEach(a => next(a))
+                } else {
+                    next(action)
+                }
+            }
+        }
+    }
+```
+- 미들 웨어는 다른 함수를 리턴하는 함수들의 집합으로 표현된다.
+- 가장 바깥의 multiActions 함수는 미들웨어가 데이터 스토어에 등록될 때 호출되며, 데이터 스토어의 dispatch 와 getState 메서드를 받는다.
+- 이는 미들웨어가 액션을 디스패치할 수 있고 데이터 스토어의 현재 데이터를 가져올 수 있게 한다.
+- 데이터 스토어는 여러 미들웨어 컴포넌트를 사용할 수 있다.
+- 액션은 하나의 미들웨어에서 다른 미들웨어로 전달될 수 있고 최종적으로 데이터 스토어의 dispatch 메서드로 전달될 수 있다.
+
+```text
+ return function receiveNext(next)
+```
+- receiveNext 함수는 액션이 데이터 스토어에 디스패치 되면 호출되는, 가장 안쪽의 함수인 processAction 을 리턴한다.
+- 이 함수는 다음 미들웨어 컴포넌트로 전달되기 전의 액션 객체를 변경하거나 교첼할 수 있다.
+
+- __리덕스는 데이터 스토어와 함께 사용하는 미들웨어 사슬을 생성할 때 사용할 수 있는 applyMiddleware 라는 함수를 제공한다.__
+```text
+applyMiddleware 함수엔 복수의 미들웨어 함수를 각 인자로 전달 할 수 있으며, 함수들은 전달된 순서대로 사슬을 이루게 된다.
+```
+```jsx
+import {PRODUCTS} from "./dataTypes";
+import {saveProduct, saveSuppliers} from "./modelActionCreators";
+import {endEditing} from "./stateActions";
+
+export const saveAndEndEditing = (data, dataType) => [ dataType === PRODUCTS ? saveProduct(data) : saveSuppliers(data), endEditing()]
+```
+- saveAndEndEditing 액션은 데이터 객체와 데이터 타입을 받아 이를 사용해 액션의 배열을 만든다.
+- 액션의 배열은 미들웨어에 전달돼 순서대로 디스패치될 것이다.
+
+
+

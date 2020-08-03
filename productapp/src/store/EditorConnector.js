@@ -2,6 +2,7 @@ import {connect} from "react-redux";
 import {endEditing} from "./stateActions"
 import {saveProduct, saveSuppliers} from "./modelActionCreators";
 import {PRODUCTS, SUPPLIERS} from "./dataTypes";
+import {saveAndEndEditing} from "./multiActionCreators";
 
 export const EditorConnector = (dataType, presentationComponent) => {
     const mapStateToProps = (storeData) => ({
@@ -13,8 +14,9 @@ export const EditorConnector = (dataType, presentationComponent) => {
     const mapDispatchToProps = dispatch => ({
         cancelCallback: () => dispatch(endEditing()),
         saveCallback: (data) => {
-            dispatch((dataType === PRODUCTS ? saveProduct : saveSuppliers)(data));
-            dispatch(endEditing())
+            // dispatch((dataType === PRODUCTS ? saveProduct : saveSuppliers)(data));
+            // dispatch(endEditing())
+            saveAndEndEditing(data,dataType)
         }
     });
 
