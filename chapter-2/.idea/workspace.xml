@@ -20,10 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9f03f8d8-88cd-48c0-a8ab-c31cc25d5bea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../memo/chapter02.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/scripts/index.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +57,7 @@
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
   </component>
   <component name="RunManager">
     <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
@@ -85,6 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1596528598403</updated>
       <workItem from="1596528599660" duration="3931000" />
+      <workItem from="1596536399019" duration="66000" />
     </task>
     <servers />
   </component>
@@ -101,24 +102,25 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1402" height="1372" key="GridCell.Tab.0.bottom" timestamp="1596535101484">
+    <state width="1402" height="1372" key="GridCell.Tab.0.bottom" timestamp="1596536428205">
       <screen x="0" y="0" width="5120" height="1440" />
     </state>
-    <state width="1402" height="1372" key="GridCell.Tab.0.bottom/0.0.5120.1440@0.0.5120.1440" timestamp="1596535101484" />
-    <state width="1402" height="1372" key="GridCell.Tab.0.center" timestamp="1596535101484">
+    <state width="1402" height="1372" key="GridCell.Tab.0.bottom/0.0.5120.1440@0.0.5120.1440" timestamp="1596536428205" />
+    <state width="1402" height="1372" key="GridCell.Tab.0.center" timestamp="1596536428205">
       <screen x="0" y="0" width="5120" height="1440" />
     </state>
-    <state width="1402" height="1372" key="GridCell.Tab.0.center/0.0.5120.1440@0.0.5120.1440" timestamp="1596535101484" />
-    <state width="1402" height="1372" key="GridCell.Tab.0.left" timestamp="1596535101484">
+    <state width="1402" height="1372" key="GridCell.Tab.0.center/0.0.5120.1440@0.0.5120.1440" timestamp="1596536428205" />
+    <state width="1402" height="1372" key="GridCell.Tab.0.left" timestamp="1596536428205">
       <screen x="0" y="0" width="5120" height="1440" />
     </state>
-    <state width="1402" height="1372" key="GridCell.Tab.0.left/0.0.5120.1440@0.0.5120.1440" timestamp="1596535101484" />
-    <state width="1402" height="1372" key="GridCell.Tab.0.right" timestamp="1596535101484">
+    <state width="1402" height="1372" key="GridCell.Tab.0.left/0.0.5120.1440@0.0.5120.1440" timestamp="1596536428205" />
+    <state width="1402" height="1372" key="GridCell.Tab.0.right" timestamp="1596536428205">
       <screen x="0" y="0" width="5120" height="1440" />
     </state>
-    <state width="1402" height="1372" key="GridCell.Tab.0.right/0.0.5120.1440@0.0.5120.1440" timestamp="1596535101484" />
+    <state width="1402" height="1372" key="GridCell.Tab.0.right/0.0.5120.1440@0.0.5120.1440" timestamp="1596536428205" />
     <state x="919" y="329" width="672" height="678" key="search.everywhere.popup" timestamp="1596529616861">
       <screen x="0" y="0" width="5120" height="1440" />
     </state>
