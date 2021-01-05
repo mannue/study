@@ -19,6 +19,9 @@ public class Customer {
         return _name;
     }
 
+    // Todo
+    // 요구사항 변경이 복잡하게 변경되어야 한다.
+    //
     public String statement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
@@ -29,21 +32,7 @@ public class Customer {
             Rental each = (Rental)rentals.nextElement();
 
             // 각 영화에 대한 요금 결정
-            switch (each.getMovie().getPriceCode()) {
-                case Movie.REGULAR:
-                    thisAmount += 2;
-                    if (each.getDaysRented() > 2)
-                        thisAmount += (each.getDaysRented() - 2) * 1.5;
-                    break;
-                case Movie.NEW_RELEASE:
-                    thisAmount += each.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDREN:
-                    thisAmount += 1.5;
-                    if (each.getDaysRented() > 3)
-                        thisAmount += (each.getDaysRented() - 3) * 1.5;
-                    break;
-            }
+            thisAmount = amountFor(each);
 
             // 포인트 (frequent renter points) 추가
             frequentRenterPoints ++;
@@ -58,5 +47,23 @@ public class Customer {
         result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
         result += "You earned " + String.valueOf(frequentRenterPoints) + "frequent renter points";
         return  result;
+    }
+
+    private double amountFor( Rental each) {
+        int thisAmount = 0;
+        switch (each.getMovie().getPriceCode()) {
+            case Movie.REGULAR -> {
+                thisAmount += 2;
+                if (each.getDaysRented() > 2)
+                    thisAmount += (each.getDaysRented() - 2) * 1.5;
+            }
+            case Movie.NEW_RELEASE -> thisAmount += each.getDaysRented() * 3;
+            case Movie.CHILDREN -> {
+                thisAmount += 1.5;
+                if (each.getDaysRented() > 3)
+                    thisAmount += (each.getDaysRented() - 3) * 1.5;
+            }
+        }
+        return thisAmount;
     }
 }
