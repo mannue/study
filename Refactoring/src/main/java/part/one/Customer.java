@@ -50,7 +50,7 @@ public class Customer {
     }
 
     private double amountFor( Rental each) {
-        int thisAmount = 0;
+        double thisAmount = 0;
         switch (each.getMovie().getPriceCode()) {
             case Movie.REGULAR -> {
                 thisAmount += 2;
