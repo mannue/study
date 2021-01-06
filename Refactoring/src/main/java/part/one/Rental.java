@@ -34,4 +34,13 @@ public class Rental {
         }
         return result;
     }
+
+    public int getFrequentRenterPoints() {
+        int frequentRenterPoints = 0;
+        frequentRenterPoints++;
+        // 최신(new release) 을 이틀 이상 대여하는 경우 추가 포인트 제공
+        if ((getMovie().getPriceCode() == Movie.NEW_RELEASE) && getDaysRented() > 1)
+            frequentRenterPoints ++;
+        return frequentRenterPoints;
+    }
 }
