@@ -23,4 +23,10 @@
     });
   });
   ```
-  - e.target.nodeName 은 요소의 
+  - e.target.nodeName 은 요소의 이름 이다.
+  - e.target.parentElement 은 요소의 부모 요소 이다.
+  ```text
+     method
+       Element.removeAttribute()
+       - 요소의 속성을 제거하는 API
+  ```
