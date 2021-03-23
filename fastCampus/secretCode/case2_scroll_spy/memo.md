@@ -5,10 +5,7 @@
     window.addEventListener("scroll", (e) => {
       const { scrollTop } = e.target.scrollingElement;
       // do something
-      const findIndex = offsetTops.findIndex((item) => {
-        const [start , end] = item;
-        return start <= scrollTop && scrollTop <= end
-      });
+      const findIndex = offsetTops.findIndex(([start , end]) => start <= scrollTop && scrollTop <= end);
     
       navItems.forEach((value,index) => {
         if (index !== findIndex) value.classList.remove("on")
@@ -44,4 +41,32 @@
         - 위 정리한것 처럼 순환하면서 index 를 비교하고 해당 영역이 아니면 class 에서 on 을 삭제하고 맞으면 on 을 추가한다.
         - 여기서 해당 영역이 맞은데 on 이 존재하면 return 해야 한다. 그 이유는 해당 영역에서 on 인데 계속 리랜더링 하기 때문이다.
     
-- 동영상 정리 
+- 동영상 정리
+    - 차이점
+        ```javascript
+            if(value.classList.contains("on")) return;
+            value.classList.toggle("on");
+            -> 
+            value.classList.add("on");
+        ```
+    - 풀이 과정
+        - 위에 해결한 방법과 거의 일치 한다. 다만 위 코드처럼 toggle 이 아닌 add 로 변경하는게 효과적이다.
+
+- 문제 풀이 외 정리 
+    - Array.from() 
+        ```text
+           Array.from() 메서드는 유사 배열 객체(array-like object)나반복 가능한 객체(iterable object)를 얕게 복사해새로운Array 객체를 만듭니다.
+        ```
+        - [참고 사이트]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from")
+    - Element.parentElement
+        ```text
+            The Node.parentElement read-only property returns the DOM node's parent Element, or null if the node either has no parent, or its parent isn't a DOM Element.
+            parentElement 는 읽기 전용 속성이며, 부모 Element 가 있으면 Element 를 주고 없거나 부모 Element 가 DOM Element 가 아니면 null 를 리턴한다. 
+        ```
+        - [참고 사이트]("https://developer.mozilla.org/en-US/docs/Web/API/Node/parentElement")
+    - Element.scrollIntoView
+        ```text
+            Element 인터페이스의 scrollIntoView() 메소드는 scrollIntoView()가 호출 된 요소가 사용자에게 보여지도록 요소의 상위 컨테이너를 스크롤합니다.
+        ```
+        - [참고 사이트]("https://developer.mozilla.org/ko/docs/Web/API/Element/scrollIntoView")
+    
