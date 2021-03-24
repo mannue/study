@@ -69,4 +69,77 @@
             Element 인터페이스의 scrollIntoView() 메소드는 scrollIntoView()가 호출 된 요소가 사용자에게 보여지도록 요소의 상위 컨테이너를 스크롤합니다.
         ```
         - [참고 사이트]("https://developer.mozilla.org/ko/docs/Web/API/Element/scrollIntoView")
+
+## 2. resize 에 무관하게 동작하게끔 기능 구현 
+- 혼자 해결한 연습 문제
+    ```javascript
+        const getOffsetTops = (contentsElem.clientHeight / contentItems.length);
+        const { scrollTop } = e.target.scrollingElement;
+        const targetIndex = parseInt((scrollTop/getOffsetTops).toFixed(0))
+        navItems.forEach((value,index) => {
+            if (index !== targetIndex) value.classList.remove("on")
+            else value.classList.add("on");
+        });
+    ```
+    - 풀이 과정
+        1. 우선 getOffsetTops 값이 사라져서 content 높이에서 contentItem 개수로 나눠야 겠다 라는 생각을 하게 되었으며, 그럼 개당 높이를 알수 있었다.
+        2. 스크롤 값을 얻어서 offset 값으로 나눠서 해당 영역이면 클래스 on을 추가하고 삭제하도록 하였다.
+        3. 결과적으로 는 잘 동작하였지만 풀이 와는 다른다...
     
+- 동영상 정리 
+    ```javascript
+        const offsetTops = (() => {
+            let ofst = 0;
+            let res = [];
+            return () => {
+                if (ofst === window.innerHeight) return res;
+                ofst = window.innerHeight;
+                res = contentItems.map((elem) => {
+                    const [ofs, clh] = [elem.offsetTop, elem.clientHeight];
+                    return [ofs - clh / 2, ofs + clh / 2];
+                });
+                return res;
+            }
+        })();
+        
+        window.addEventListener("scroll", e => {
+            // fix here
+            const { scrollTop } = e.target.scrollingElement;
+            // do something
+            const findIndex = offsetTops().findIndex((item) => {
+            const [start , end] = item;
+            return start <= scrollTop && scrollTop <= end
+        });
+    ```
+    - 차이점
+        ```javascript
+            const offsetTops = (() => {
+            let ofst = 0;
+            let res = [];
+            return () => {
+                    if (ofst === window.innerHeight) return res;
+                    ofst = window.innerHeight;
+                    res = contentItems.map((elem) => {
+                        const [ofs, clh] = [elem.offsetTop, elem.clientHeight];
+                        return [ofs - clh / 2, ofs + clh / 2];
+                    });
+                    return res;
+                }
+            })();
+        ```
+        - 먼저 함수를 만들어서 실행 시키도록 하였지만 매번 계산으로 인해 클로저 를 사용하도록 하였다.
+        - window 의 높이 값을 통해 다시 계산하도록 처리하였다.
+    
+    - 문제 풀이 외 정리
+        - 클로저 
+            - 우선 클로저를 이해 하기 전에 자바스크립트의 특징을 알아야 된다.
+            - 자바 스크립트는 선언 한 시기가 중요하며 럭시컬 스코프 을 가지며, 메소드 나 객체를 참조 시에는 사라지지 않는다.
+            - 결국 클로저는 외부에서는 참조 할수 없지만 내부에서만 참조 가능한 구조가 클로저 이다.
+            
+        - Window.innerHeight
+            ```text
+                The read-only innerHeight property of the Window interface returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+                읽기 전용 속성의 윈도우 인터페이스 이며 내부 윈도우 높이를 리턴한다 
+                현재 수평 스크롤 바가 있다면 해당 높이 값도 포함된다. 
+            ```
+            
