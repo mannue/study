@@ -41,16 +41,18 @@
         - 위 정리한것 처럼 순환하면서 index 를 비교하고 해당 영역이 아니면 class 에서 on 을 삭제하고 맞으면 on 을 추가한다.
         - 여기서 해당 영역이 맞은데 on 이 존재하면 return 해야 한다. 그 이유는 해당 영역에서 on 인데 계속 리랜더링 하기 때문이다.
     
+
 - 동영상 정리
     - 차이점
         ```javascript
             if(value.classList.contains("on")) return;
             value.classList.toggle("on");
-            -> 
+            // ->
             value.classList.add("on");
         ```
     - 풀이 과정
         - 위에 해결한 방법과 거의 일치 한다. 다만 위 코드처럼 toggle 이 아닌 add 로 변경하는게 효과적이다.
+
 
 - 문제 풀이 외 정리 
     - Array.from() 
@@ -86,6 +88,7 @@
         2. 스크롤 값을 얻어서 offset 값으로 나눠서 해당 영역이면 클래스 on을 추가하고 삭제하도록 하였다.
         3. 결과적으로 는 잘 동작하였지만 풀이 와는 다른다...
     
+
 - 동영상 정리 
     ```javascript
         const offsetTops = (() => {
@@ -107,8 +110,9 @@
             const { scrollTop } = e.target.scrollingElement;
             // do something
             const findIndex = offsetTops().findIndex((item) => {
-            const [start , end] = item;
-            return start <= scrollTop && scrollTop <= end
+                const [start , end] = item;
+                return start <= scrollTop && scrollTop <= end
+            });
         });
     ```
     - 차이점
@@ -129,7 +133,7 @@
         ```
         - 먼저 함수를 만들어서 실행 시키도록 하였지만 매번 계산으로 인해 클로저 를 사용하도록 하였다.
         - window 의 높이 값을 통해 다시 계산하도록 처리하였다.
-    
+        
     - 문제 풀이 외 정리
         - 클로저 
             - 우선 클로저를 이해 하기 전에 자바스크립트의 특징을 알아야 된다.
@@ -137,9 +141,69 @@
             - 결국 클로저는 외부에서는 참조 할수 없지만 내부에서만 참조 가능한 구조가 클로저 이다.
             
         - Window.innerHeight
-            ```text
-                The read-only innerHeight property of the Window interface returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
-                읽기 전용 속성의 윈도우 인터페이스 이며 내부 윈도우 높이를 리턴한다 
-                현재 수평 스크롤 바가 있다면 해당 높이 값도 포함된다. 
-            ```
+        ```text
+            The read-only innerHeight property of the Window interface returns the interior height of the window in pixels, including the height of the horizontal scroll bar, if present.
+            읽기 전용 속성의 윈도우 인터페이스 이며 내부 윈도우 높이를 리턴한다 
+            현재 수평 스크롤 바가 있다면 해당 높이 값도 포함된다. 
+        ```
+
+## 3. resize 이벤트를 이용한 방법
+- 혼자 해결한 풀이
+    ```javascript
+        let offsetTops = [];
+        const getOffsetTops = () => {
+            offsetTops = contentItems.map((elem) => {
+                const [ofs, clh] = [elem.offsetTop, elem.clientHeight];
+                return [ofs - clh / 2, ofs + clh / 2];
+            });
+        };
+        getOffsetTops();
+    ```
+    - 풀이 과정
+        ```javascript
+            window.addEventListener("resize", getOffsetTops);
+        ```
+        - 기존에는 이벤트 안에서 window.innerHeight 를 체크했지만 이벤트를 등록함으로써 size 변경이 해당 함수가 호출됩니다.
+    
+- 문제 풀이 외 정리
+    - window.addEventListener 
+        ```text
+            Window.addEventListener(     type: string,     listener: EventListener | EventListenerObject,     options?: boolean | AddEventListenerOptions): void
+            Appends an event listener for events whose type attribute value is type. The callback argument sets the callback that will be invoked when the event is dispatched.
+            이벤트를 위해 이벤트 리스너를 추가하며 속성 값이 타입이며, 콜백을 등록 한다. 콜백은 이벤트가 발생하면 실행된다.
+            
+            addEventListener(type: K, listener: (this:Window, ev: WindowEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void`
+        ```
+        - 이벤트 리스너 안에서 this.innerHeight 값을 가져올수 있지만 해당 이벤트는 사이즈 변경시 발생함으로 해당 값이 필요없다.
+    - JavaScript 의 Object 형식
+        ```text
+                interface DOMTokenList {
+                /**
+                * Returns the number of tokens.
+                */
+                readonly length: number;
+                /**
+                * Returns the associated set as string.
+                *
+                * Can be set, to change the associated attribute.
+                */
+                value: string;
+                toString(): string;
+                /**
+                * Adds all arguments passed, except those already present.
+                *
+                * Throws a "SyntaxError" DOMException if one of the arguments is the empty string.
+                *
+                * Throws an "InvalidCharacterError" DOMException if one of the arguments contains any ASCII whitespace.
+                */
+                add(...tokens: string[]): void;
+                /**
+                * Returns true if token is present, and false otherwise.
+                */
+        ```
+        - 자바 스크립트는 오브젝트도 key, value 쌍이다.
+        ```javascript
+            c.classList[i === targetIndex ? "add" : "remove"]("on");
+        ```
+        - 그래서 메소드도 위처럼 키 값을 이용해서 가져온 다음 함수 호출로 처리할 수있다.
             
