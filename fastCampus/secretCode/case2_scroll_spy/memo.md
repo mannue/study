@@ -258,6 +258,6 @@
                     }
                 }
             ```
-            - return 옆 (...args) 는 [Rest 파리미터]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/rest_parameters")로서 정래지지 않은 수 인수를 배열로 나타냏수 있게 합니다.
-            - func(...args) 는 [전개 구문]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax") 이다.
+            - return 옆 (...args) 는 [Rest 파리미터](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/rest_parameters) 로서 정래지지 않은 수 인수를 배열로 나타냏수 있게 합니다.
+            - func(...args) 는 [전개 구문](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax) 이다.
       
