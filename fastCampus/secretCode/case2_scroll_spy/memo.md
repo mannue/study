@@ -260,4 +260,58 @@
             ```
             - return 옆 (...args) 는 [Rest 파리미터](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/rest_parameters) 로서 정래지지 않은 수 인수를 배열로 나타냏수 있게 합니다.
             - func(...args) 는 [전개 구문](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax) 이다.
-      
+
+## 5. Intersection Observer 를 활용하여 기능
+- 혼자 풀이
+    ```javascript
+          if (entries) {
+            const {bottom, height, top} = entries[0].boundingClientRect;
+            console.log(height,bottom,top)
+            const targetIndex = Number(entries[(height/2) < bottom ? 0 : 1 ].target.innerHTML)
+            navItems.forEach((item, index) => {
+                item.classList[index === (targetIndex-1) ? "add" : "remove"]("on");
+            });
+        }
+    ```
+    - 풀이 과정
+        - 첫번째 entries 에 값을 출력한 결과 배열이 2개가 출력되는것을 알수 가 있었습니다. 그래서 첫번째 index 값의 boundingClientRect 를 이용하기로 했습니다.
+          ```text
+            IntersectionObserverEntry.boundingClientRect Read only
+            Returns the bounds rectangle of the target element as a DOMRectReadOnly.
+            타겟 element 의 직사각형 bounds 를 얻을수 있다.
+          ```
+        - 해당 값의 bottom 과 height 값을 가지고 해당 target 의 innerHTML 을 이용해 value 값을 얻을수 있었습니다.
+        - value 값을 토대로 해당 class 를 제어 했습니다.
+    
+- 동영상 풀이
+    ```javascript
+        (entries) => {
+            // do something
+            const { target } = entries.find(item => item.isIntersecting) || {}
+            const targetIndex = contentItems.indexOf(target);
+            navItems.forEach((item, index) => {
+                if (index === targetIndex) {
+                    item.classList.add("on");
+                }
+                else item.classList.remove("on");
+            });
+        }
+    ```
+    - 차이점
+        - isIntersecting Properties 값을 사용해서 쉽게 구현되었다.
+            ```text
+                IntersectionObserverEntry.isIntersecting Read only
+                A Boolean value which is true if the target element intersects with the intersection observer's root.
+                관찰 대상의 교차 상태 
+            ```
+            - [참고 사이트](https://heropy.blog/2019/10/27/intersection-observer/)
+        - 얻은 값을 토대로 비 구조화 할당 을 통해서 properties 의 target 만 가져와서 contentItems 의 index 를 찾는다.
+    
+- 문제 풀이 외 정리
+    - IntersectionObserver.IntersectionObserver()
+        ```text
+            Intersection Observer API 의 IntersectionObserver 인터페이스는 대상 요소와 그 상위 요소 혹은 최상위 도큐먼트인 viewport와의 교차 영역에 대한 변화를 비동기적으로 감지할 수 있도록 도와줍니다.
+        ```
+        - [MDN](https://developer.mozilla.org/ko/docs/Web/API/IntersectionObserver)
+    
+
