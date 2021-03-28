@@ -207,3 +207,57 @@
         ```
         - 그래서 메소드도 위처럼 키 값을 이용해서 가져온 다음 함수 호출로 처리할 수있다.
             
+## 4. throttle 과 debounce 를 통해 해당 동작을 구현
+- 동영상 정리
+    ```javascript
+        export const debounce = (func, delay) => {
+            let timeoutId = null;
+            return (...arg) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(func.bind(null, ...arg), delay);
+            };
+        }
+        
+        export const throttle = (func, ms) => {
+            let throttled = false;
+            // do something
+            return (...args) => {
+                if (!throttled) {
+                    throttled = true;
+                    setTimeout(() => { 
+                        func(...args); 
+                        throttled = false;
+                    }, ms);
+                }
+            }
+        };
+    ```
+    - 풀이 
+        - throttle 이란 이전에 scroll 이벤트가 계속 발생함으로써 해당 로직에서 연산을 계속 했다면 throttle 을 통해 좀더 효율화에 중점을 가지고 개선하였다.
+        - debounce 이란 이젠에 resize 이벤트에 대해 효율화 하는 방법이다.
+        ```text
+            debounce 에서는 bind 를 사용하였지만 throttle 에서는 Arrow function 을 쓰는 이유?
+            - debounce 는 제어가 필요없는 반면에 throttle 는 throttled 상태를 가지고 제어가 필요하다.
+            
+            bind 함수는 무엇인가?
+            - Function.bind( thisArg: any, ...argArray: any[]): any
+              thisArg : An object to which the this keyword can refer inside the new function
+                        오브젝트를 입력함으로서 해당 오브젝트 안에서 함수로 제공된다.
+              argArray : A list of arguments to be passed to the new function.
+                         입력한 값의 리스트로서 함수인자값으로 넘겨준다.
+        ```
+        - throttle 와 debounce 안에서의 ...args 사용 용도
+            ```text
+                 return (...args) => {
+                    if (!throttled) {
+                        throttled = true;
+                        setTimeout(() => { 
+                            func(...args); 
+                            throttled = false;
+                        }, ms);
+                    }
+                }
+            ```
+            - return 옆 (...args) 는 [Rest 파리미터]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Functions/rest_parameters")로서 정래지지 않은 수 인수를 배열로 나타냏수 있게 합니다.
+            - func(...args) 는 [전개 구문]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax") 이다.
+      
