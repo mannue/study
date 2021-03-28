@@ -313,5 +313,14 @@
             Intersection Observer API 의 IntersectionObserver 인터페이스는 대상 요소와 그 상위 요소 혹은 최상위 도큐먼트인 viewport와의 교차 영역에 대한 변화를 비동기적으로 감지할 수 있도록 도와줍니다.
         ```
         - [MDN](https://developer.mozilla.org/ko/docs/Web/API/IntersectionObserver)
-    
+
+## 6. React 로 Intersection Observer 
+- 문제 풀이 외 정리 
+    - Array.from
+        ```text
+            다음과 같은 경우에 Array.from()으로새Array를 만들 수 있습니다.
+                유사 배열 객체 (length 속성과 인덱싱된 요소를 가진 객체)
+                순회 가능한 객체 (Map, Set 등객체의 요소를 얻을 수 있는 객체)
+        ```
+        - [MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
 
