@@ -20,4 +20,4 @@
       insertAdjacentHTML() 메서드는 HTML or XML 같은 특정 텍스트를 파싱하고, 특정 위치에 DOM tree 안에 원하는 node들을 추가 한다.
     ```
     - [MDN 참조사이트]("https://developer.mozilla.org/ko/docs/Web/API/Element/insertAdjacentHTML")
-  - Throttle 과 Debounce : [참고사이즈]("https://webclub.tistory.com/607")
+  - Throttle 과 Debounce : [참고사이트]("https://webclub.tistory.com/607")  
