@@ -9,10 +9,10 @@
         
         document.querySelector('.toggle-button').onclick = () => {
             const theme = storage.getItem("theme");
-            const value = Object.is(theme, "right") ? "dark" : "right";
+            const value = Object.is(theme, "light") ? "dark" : "light";
             storage.setItem("theme", value);
         
-            if (Object.is(value, "right")) {
+            if (Object.is(value, "light")) {
                 document.querySelector("Body").classList.remove("dark")
             } else {
                 document.querySelector("Body").classList.add("dark")
