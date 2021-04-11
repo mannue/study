@@ -59,18 +59,18 @@
         ```text
            Array.from() 메서드는 유사 배열 객체(array-like object)나반복 가능한 객체(iterable object)를 얕게 복사해새로운Array 객체를 만듭니다.
         ```
-        - [참고 사이트]("https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from")
+        - [참고 사이트](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
     - Element.parentElement
         ```text
             The Node.parentElement read-only property returns the DOM node's parent Element, or null if the node either has no parent, or its parent isn't a DOM Element.
             parentElement 는 읽기 전용 속성이며, 부모 Element 가 있으면 Element 를 주고 없거나 부모 Element 가 DOM Element 가 아니면 null 를 리턴한다. 
         ```
-        - [참고 사이트]("https://developer.mozilla.org/en-US/docs/Web/API/Node/parentElement")
+        - [참고 사이트](https://developer.mozilla.org/en-US/docs/Web/API/Node/parentElement)
     - Element.scrollIntoView
         ```text
             Element 인터페이스의 scrollIntoView() 메소드는 scrollIntoView()가 호출 된 요소가 사용자에게 보여지도록 요소의 상위 컨테이너를 스크롤합니다.
         ```
-        - [참고 사이트]("https://developer.mozilla.org/ko/docs/Web/API/Element/scrollIntoView")
+        - [참고 사이트](https://developer.mozilla.org/ko/docs/Web/API/Element/scrollIntoView)
 
 ## 2. resize 에 무관하게 동작하게끔 기능 구현 
 - 혼자 해결한 연습 문제

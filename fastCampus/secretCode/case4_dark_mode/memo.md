@@ -38,15 +38,15 @@
         - viewport 는 웹페이지의 크기를 결정
         - width=device-width 는 웹페이지의 크기가 스마트폰의 실제 액정 크기로 설정
         - initial-scale 는 보여주는 화면의 zoom up 정도를 1 배율로 설정
-        - [참고사이트]("https://dreamaz.tistory.com/364")
+        - [참고사이트](https://dreamaz.tistory.com/364)
     - html article
         - HTML <article> 요소는 독립적으로 구분해 배포하거나 재사용 할 수 있는 구획을 나타낸다.
-        - [참고사이트]("https://developer.mozilla.org/ko/docs/Web/HTML/Element/article")
+        - [참고사이트](https://developer.mozilla.org/ko/docs/Web/HTML/Element/article)
     - css 의 box-sizing: border-box
         - box-sizing : CSS 속성은 요소의 너비와 높이를 계산하는 방법
             - border-box : 테두리와 안쪽 여백의 크기도 요소의 크기로 고려한다.
             - content-box : 기본 CSS 박스 의 크기 결정을 사용하는 방법으로 요소의 너비를 100 px 로 설정하면 콘텐츠 영역이 100px 너비를 가지며 테두리와 안쪽 여백은 이에 더해 진다.
-        - [참고사이트]("https://developer.mozilla.org/ko/docs/Web/CSS/box-sizing")
+        - [참고사이트](https://developer.mozilla.org/ko/docs/Web/CSS/box-sizing)
     - css 의 visibility 속성
         - 태그 의 가시성을 결정 
             - visible : 보임
@@ -59,7 +59,7 @@
         ```text
             transition: <property> <duration> <timing-function> <delay>;
         ``` 
-        - [참고사이트]("https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions")
+        - [참고사이트](https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions)
     
 ## window.matchMedia 사용하기
 - 혼자 풀이
@@ -82,8 +82,8 @@
         ```text
             Window.matchMedia() 메서드는 주어진 미디어 쿼리 문자열의 분석 결과를 나타내는 MediaQueryList (en-US) 객체를 반환합니다.
         ```
-        - [참고사이트1]("https://developer.mozilla.org/ko/docs/Web/API/Window/matchMedia")
-        - [참고사이트2]("https://eunsukim.me/posts/how-to-use-media-query-with-javascript-matchmedia")
+        - [참고사이트1](https://developer.mozilla.org/ko/docs/Web/API/Window/matchMedia)
+        - [참고사이트2](https://eunsukim.me/posts/how-to-use-media-query-with-javascript-matchmedia)
     - prefers-color-scheme
         ```text
             - css 에서 시스템의 모드를 아래와 같이 가져올수 있다.
@@ -91,11 +91,15 @@
             - js 에서 시스템의 모드를 가져오는 방법
                window.matchMedia('(prefers-color-scheme: dark)
         ```
-        - [참고사이트]("https://velog.io/@yijaee/%EB%8B%A4%ED%81%AC%EB%AA%A8%EB%93%9C-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0")
+        - [참고사이트](https://velog.io/@yijaee/%EB%8B%A4%ED%81%AC%EB%AA%A8%EB%93%9C-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
 
 ## React 로 만들기
 - 풀이외 정리
-    - css 의 margin 0 auto : 위아래는 0 이며 좌우는 자동 ![참고사이트]("https://hansolcha.tistory.com/4")
-    - css 의 display : flex : [참고사이트]("https://studiomeal.com/archives/197")
-    - css 의 position: [참고사이트]("https://www.zerocho.com/category/CSS/post/5864f3b59f1dc000182d3ea1")
-    - style-components: [참고사이트]("https://react.vlpt.us/styling/03-styled-components.html")
+    - css 의 margin 0 auto : 위아래는 0 이며 좌우는 자동 
+      - [참고사이트](https://hansolcha.tistory.com/4)
+    - css 의 display : flex 
+      - [참고사이트](https://studiomeal.com/archives/197")
+    - css 의 position
+      - [참고사이트](https://www.zerocho.com/category/CSS/post/5864f3b59f1dc000182d3ea1)
+    - style-components
+      - [참고사이트](https://react.vlpt.us/styling/03-styled-components.html)
