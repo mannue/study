@@ -23,7 +23,13 @@
     2. 확인 후 right 가 아니면 right 를 맞으면 dark 로 storage 값을 변경하였고 className 에도 dark 여부에 따라 별명을 제거하였다.
     3. DOMContentLoaded 에서 로딩 되면 toggle-button 을 click 하여 값을 변경해주고 visibility 를 visible 로 변경해줬다.
 - 강의 풀이
-  
+  ```javascript
+     - setTimeout(()=>document.body.style.visibility = "visible",300);
+     - document.body.style.classList.add("dark")
+  ```
+  - 혼자 한 풀이와 다른점은 transition: left 0.3s; 이 부분을 놓쳤다.
+  - transition: left 0.3s 으로 인하여 0.3 delay 를 준 다음에 visible 를 해야 된다.
+    
 - 풀이외 정리
     - html meta viewport 
         ```text
@@ -47,4 +53,10 @@
             - hidden : 숨김
             - collapse : 겹치도록 지정 
             - inherit : 부모 요소의 값을 상속
-    
+    - html 의 i 태그
+        - 글자를 기율여서 표시하는 태그
+    - css 의 transition
+        ```text
+            transition: <property> <duration> <timing-function> <delay>;
+        ``` 
+        - [참고사이트]("https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions")
