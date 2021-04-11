@@ -1,6 +1,6 @@
 # 4장 Dark Mode
-- 테마를 right / dark 모드를 적용하기 
-- 혼자서 풀이
+## 테마를 right / dark 모드를 적용하기 
+- 혼자 풀이
     ```javascript
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.toggle-button').click();
@@ -25,7 +25,7 @@
 - 강의 풀이
   ```javascript
      - setTimeout(()=>document.body.style.visibility = "visible",300);
-     - document.body.style.classList.add("dark")
+     - document.body.style.classList.toggle("dark",theme === 'dark')
   ```
   - 혼자 한 풀이와 다른점은 transition: left 0.3s; 이 부분을 놓쳤다.
   - transition: left 0.3s 으로 인하여 0.3 delay 를 준 다음에 visible 를 해야 된다.
@@ -60,3 +60,35 @@
             transition: <property> <duration> <timing-function> <delay>;
         ``` 
         - [참고사이트]("https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions")
+    
+## window.matchMedia 사용하기
+- 혼자 풀이
+    ```javascript
+      if (!theme)
+        localStorage.setItem('theme', `${window.matchMedia("class: dark").matches ? "dark" : 'light'}`);
+    ```
+    - 완전 문제를 잘못 인식했다...
+- 동영상 풀이
+    ```javascript
+          if (!theme) {
+            console.log(window.matchMedia('(prefers-color-scheme: dark)').matches);
+            localStorage.setItem('theme', `${window.matchMedia("(prefers-scheme: dark)").matches ? "dark" : 'light'}`);
+          }
+    ```
+    - window.matchMedia 를 이용하여 시스템의 모드를 가져올수 있다. 
+    - 이를 바탕으로 dark 모드 인지 light 모드 인지를 적용한다.
+- 풀이외 정리
+    - window.matchMedia 
+        ```text
+            Window.matchMedia() 메서드는 주어진 미디어 쿼리 문자열의 분석 결과를 나타내는 MediaQueryList (en-US) 객체를 반환합니다.
+        ```
+        - [참고사이트1]("https://developer.mozilla.org/ko/docs/Web/API/Window/matchMedia")
+        - [참고사이트2]("https://eunsukim.me/posts/how-to-use-media-query-with-javascript-matchmedia")
+    - prefers-color-scheme
+        ```text
+            - css 에서 시스템의 모드를 아래와 같이 가져올수 있다.
+              @media (prefers-color-scheme: dark)
+            - js 에서 시스템의 모드를 가져오는 방법
+               window.matchMedia('(prefers-color-scheme: dark)
+        ```
+        - [참고사이트]("https://velog.io/@yijaee/%EB%8B%A4%ED%81%AC%EB%AA%A8%EB%93%9C-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0")
