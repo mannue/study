@@ -92,3 +92,14 @@
                window.matchMedia('(prefers-color-scheme: dark)
         ```
         - [참고사이트]("https://velog.io/@yijaee/%EB%8B%A4%ED%81%AC%EB%AA%A8%EB%93%9C-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0")
+
+## React 로 만들기
+- 풀이외 정리
+    - css 의 margin 0 auto : 위아래는 0 이며 좌우는 자동
+        - [참고사이트]("https://hansolcha.tistory.com/4")
+    - css 의 display : flex 
+        - [참고사이트]("https://studiomeal.com/archives/197")
+    - css 의 position 
+        - [참고사이트]("https://www.zerocho.com/category/CSS/post/5864f3b59f1dc000182d3ea1")
+    - style-components 
+        - [참고사이트]("https://react.vlpt.us/styling/03-styled-components.html")
