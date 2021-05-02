@@ -60,3 +60,12 @@
         - 참고 사이트
             - [DOMContentLoaded](https://developer.mozilla.org/ko/docs/Web/API/Window/DOMContentLoaded_event)
             - [CSS](https://developer.mozilla.org/ko/docs/Web/CSS/calc())
+    
+- React 
+    - 풀이외 정리
+        ```text
+            - css 
+              & : 부모 참조 선택자 를 대신하는 기호 
+        ```
+        - 참고 사이트
+            - [css](https://radan.tistory.com/23) 
