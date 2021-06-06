@@ -24,7 +24,7 @@
       - focusout
         - element 에서 focus 가 사라지면 발생하는 이벤트로 이와 유사한 이벤트로는 blur(블러) 가 있다.
         - blur 와의 차이점
-          - focusout 의 bubbles 인 반면에 blur 는 아니다
+          - focusout 의 bubble 인 반면에 blur 는 아니다
           - 즉 상위 부모 element 에서 처리하지 않고 자신이 해당 이벤트를 직접 처리하는 경우에는 blur 가 좋을것 같다.
       - focusin
         - focusout 과 반대로 focus 가 생기면 발생하는 이벤트 이다.
