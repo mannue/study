@@ -8,7 +8,7 @@ var openLock = function(deadends, target) {
         let size = queue.length;
         count = count + 1
         for (let i=0; i < size; i++) {
-            value = queue.shift()
+            let value = queue.shift()
             let res = find(value,check,deadends,queue)
             if (res.includes("0000")) return count
             check.push(value)
