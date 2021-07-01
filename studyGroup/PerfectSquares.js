@@ -23,9 +23,7 @@ var numSquares = function(n) {
             let result = limit-squareList[i]
             if (result < 0) continue;
             if (result === 0) return data.count+1;
-            if(result > 0){
-                queue.push(new Value(data.count+1,result))
-            }
+            queue.push(new Value(data.count+1,result))
         }
     }
 };
