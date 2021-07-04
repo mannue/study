@@ -1,4 +1,4 @@
-# Model Windows
+# Modal Windows
 ## case 1 : js 를 이용해서 구현해라
 - 구현 내용
     ```text
