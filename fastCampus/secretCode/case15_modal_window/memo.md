@@ -54,6 +54,23 @@
 - 코드 설명
   - jquery modal library 의 Example 1: Open & Close with links 를 참조하였다.
   - link 속성에 "modal:open" , "modal:close" 값을 주고 open 할 팝업창의 id에 값을 넣어주면 된다.
+
+## case3: react 를 사용해서 구현해라
+- 구현 코드
+  ```js
+    const [isVisible, onSetIsVisible] = useState(false);
+
+    <BodyBlackout isVisible={isVisible} onSetIsVisible={onSetIsVisible} />
+    <Modal isVisible={isVisible} onSetIsVisible={onSetIsVisible} />
+
+    <button
+      type="button"
+      className="btn btn-sm btn-primary" onClick={() => onSetIsVisible(true)} >
+      팝업을 엽니다.
+    </button>
+  ```
+- 코드 설명
+  - useState를 사용해서 props 로 전달하면 된다.
   
 - 모르는 부분 정리
   - vh (viewport height)
