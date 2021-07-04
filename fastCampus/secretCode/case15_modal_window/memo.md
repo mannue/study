@@ -2,7 +2,10 @@
 ## case 1 : js 를 이용해서 구현해라
 - 구현 내용
     ```text
-
+        - 팝업을 엽니다를 누르면 팝업이 뜬다.
+        - x 버튼을 누르면 팝업이 닫힘
+        - 팝업 이외 부분을 누르면 닫힘
+        - 팝업 안을 눌렀을 떄 닫히면 안됨
     ```
 - 셀프 구현 코드
     ```javascript
@@ -31,6 +34,26 @@
 - 코드 설명
     - popup-modal 은 현재 css 의 opacity 를 0 을 가짐으로써 눈에 안보이는 상태지만 html에 자리를 잡고 있는 상태이다.
     - 버튼 클릭시 blacked-out 을 해주고 눈에 안보이는 pop-modal 를 보여주면 된다.
+  
+## case 2: jquery 를 사용해서 구현해라
+- 구현 코드
+  ``` html
+      <a class="btn btn-sm btn-primary popup-trigger" href="#popup" rel="modal:open">
+        팝업을 엽니다.
+      </a>
+      
+      
+      
+      <!-- Modals -->
+      <div
+            id="popup"
+      class="popup-modal shadow "
+      data-popup-modal="one">
+      <a rel="modal:close"><i class="fa fa-window-close popup-modal__close" ></i>
+  ```
+- 코드 설명
+  - jquery modal library 의 Example 1: Open & Close with links 를 참조하였다.
+  - link 속성에 "modal:open" , "modal:close" 값을 주고 open 할 팝업창의 id에 값을 넣어주면 된다.
   
 - 모르는 부분 정리
   - vh (viewport height)
