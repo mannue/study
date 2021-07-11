@@ -8,28 +8,25 @@ var calPoints = function(ops) {
         switch (value) {
             case "C":
                 if(stack.length < -1) return -1;
-                stack.pop();
+                sum -= stack.pop();
                 break;
             case "D":
                 if (stack.length < -1) return -1;
-                let doubleItem = stack.pop()
+                let doubleItem = stack[stack.length -1] * 2
+                sum += doubleItem;
                 stack.push(doubleItem);
-                stack.push(doubleItem * 2);
                 break;
             case "+":
-                if (stack.length < -1) return -1;
-                let rightItem = stack.pop();
-                if (stack.length < -1) return -1;
-                let leftItem = stack.pop();
-                stack.push(leftItem);
-                stack.push(rightItem);
-                stack.push(leftItem + rightItem);
+                if (stack.length < 2) return -1;
+                let addItem = stack[stack.length -1] + stack[stack.length -2]
+                sum += addItem;
+                stack.push(addItem);
                 break;
             default:
+                sum += Number(value);
                 stack.push(Number(value));
         }
     }
-    for (let i of stack) sum += i;
     return sum;
 };
 let res = calPoints(["5","2","C","D","+"])
