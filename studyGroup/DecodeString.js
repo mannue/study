@@ -38,6 +38,6 @@ function getString(stack) {
     }
     return res;
 }
-let rs = decodeString("100[leetcode]")
-console.log('a'.repeat(2));
+let rs = decodeString("2[abc]3[cd]ef")
+console.assert(rs==="abcabccdcdcdef");
 
