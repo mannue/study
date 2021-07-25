@@ -17,7 +17,7 @@
         ```
         - getComments 함수 는 입력한 page 부터 limit 까지 comment 의 크기를 return 하는 함수다.
         ```js
-            function getPageListFormat() {
+                function getPageListFormat() {
                 var result = '';
                 for (let i=1; i<=this.total_page; i++) {
                 let element = '';
@@ -57,3 +57,64 @@
     - 기타
       - [match](https://developer.mozilla.org/en-US/docs/Web/API/Element/matches) 
         
+2. jQuery 로 구현
+   - JS 차이점
+      ```js
+            var commentContainer = $("#commentContainer");
+            var pageContainer = $("#pageContainer");
+            
+            commentContainer.html(pagination.getCommentFormat(pagination.getComments(1)));
+            pageContainer.html(pagination.getPageListFormat());
+            
+            $(document).on("click", "#pageContainer button", function () {
+            var page = $(this).html();
+            console.log(page);
+            commentContainer.html(
+            pagination.getCommentFormat(pagination.getComments(page))
+            );
+            pageContainer.html(pagination.getPageListFormat());
+            });
+      ```
+     - html : 선택한 요소 안의 내용을 가져오거나, 다른 내용으로 바꿉니다. [참고](https://www.codingfactory.net/10324)
+   
+   
+3. React 로 구현
+   - 코드
+      ```js
+        // comments.js
+        reducers : {
+
+        // payload.page 페이지 변수
+        getComments( state, action ) {    
+
+            // 해당 페이지의 보여질 게시물의 첫번째 번호
+            // const start
+            const { payload } = action;
+
+            const start =  Math.imul(5, payload.page - 1);
+
+            // 해당 페이지의 보여질 게시물의 마지막 번호
+            const limit = start + state.limit;
+
+            // data 변수로 게시물의 배열을 저장합니다.
+            // state.data = state.comments.filter();
+            state.data = state.comments.filter((_, index) => index >= start && index <= (limit-1));
+            // 현재 페이지로 셋팅합니다.
+            state.current_page = payload.page;
+
+        }
+      ```
+      - redux toolkit 라이브러리 를 이용하여 액션 을 정의 하는 부분이다. 
+      - 참고 : [redux toolkit](https://redux-toolkit.js.org/api/createSlice)
+     ```js
+         // PageList.js 
+     
+         ${({ active }) =>
+           active &&
+           `
+           background: gray;
+           color: #fff;
+         `}
+     ```
+     - PageList 에서 props 를 통해서 버튼의 백그라운드를 설정하는 부분이다. 
+      
