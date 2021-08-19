@@ -4,15 +4,12 @@ var maxPoints = function(points) {
     let y_table = {};
     let res = 0;
     for (let i=0; i < points.length; i++) {
-        x_table[`${points[i][0]}`]  = x_table[`${points[i][0]}`] ? x_table[`${points[i][0]}`] + 1 : 1;
-        y_table[`${points[i][1]}`]  = y_table[`${points[i][1]}`] ? y_table[`${points[i][1]}`] + 1 : 1;
-        res = Math.max(res,x_table[`${points[i][0]}`],y_table[`${points[i][1]}`]);
-    }
-    let angle = 0;
-    for (let i=0; i < points.length; i++) {
         let up_diagonal = {};
         let down_diagonal = {};
         let select = null;
+        x_table[`${points[i][0]}`]  = x_table[`${points[i][0]}`] ? x_table[`${points[i][0]}`] + 1 : 1;
+        y_table[`${points[i][1]}`]  = y_table[`${points[i][1]}`] ? y_table[`${points[i][1]}`] + 1 : 1;
+        res = Math.max(res,);
         for (let j=i+1; j < points.length; j++) {
             let maxX = Math.max(points[i][0],points[j][0]);
             let maxY = Math.max(points[i][1],points[j][1]);
@@ -26,10 +23,10 @@ var maxPoints = function(points) {
                 select = up_diagonal;
             }
             select[key] = select[key] ? select[key] + 1 : 2;
-            angle = Math.max(angle,select[key])
+            res = Math.max(res,select[key],x_table[`${points[i][0]}`],y_table[`${points[i][1]}`])
         }
     }
-    return Math.max(res,angle)
+    return res;
 };
 
 let res = maxPoints(
