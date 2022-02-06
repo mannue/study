@@ -1,5 +1,6 @@
 package com.mannue;
 
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -7,6 +8,11 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         int M = sc.nextInt();
         Fibonacci fibonacci = new Fibonacci(M);
-        System.out.printf("%d%n",fibonacci.get(M));
+        long now = System.currentTimeMillis();
+        System.out.printf("result >> %d%n",fibonacci.getByTopDown(M));
+        System.out.println(System.currentTimeMillis() - now);
+        now = System.currentTimeMillis();
+        System.out.printf("result >> %d%n",fibonacci.getByTopDown(M));
+        System.out.println(System.currentTimeMillis() - now);
     }
 }
